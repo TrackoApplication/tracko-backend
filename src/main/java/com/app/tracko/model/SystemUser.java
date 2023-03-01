@@ -1,14 +1,14 @@
-package com.app.tracko.entity;
+package com.app.tracko.model;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Entity
 @Data
-@Table(name="SystemUser")
-public class SystemUserEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@AllArgsConstructor
+@NoArgsConstructor
+public class SystemUser {
+
     private long SystemUserId;
     private String firstName;
     private String lastName;
