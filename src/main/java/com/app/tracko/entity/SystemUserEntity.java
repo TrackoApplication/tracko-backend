@@ -12,7 +12,12 @@ public class SystemUserEntity {
     private long SystemUserId;
     private String firstName;
     private String lastName;
-    private String userName;
     private String password;
     private String emailId;
+
+//  @Column(name = "verification_token")
+//  private String verificationToken;
+
+
+
 }
