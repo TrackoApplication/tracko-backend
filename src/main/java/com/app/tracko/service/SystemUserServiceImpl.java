@@ -4,6 +4,7 @@ import com.app.tracko.entity.SystemUserEntity;
 import com.app.tracko.model.SystemUser;
 import com.app.tracko.repository.SystemUserRepository;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +14,9 @@ import java.util.stream.Collectors;
 public class SystemUserServiceImpl implements SystemUserService{
 
     private SystemUserRepository systemUserRepository;
+
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
 
     public SystemUserServiceImpl(SystemUserRepository systemUserRepository) {
         this.systemUserRepository = systemUserRepository;
@@ -26,7 +30,6 @@ public class SystemUserServiceImpl implements SystemUserService{
                 map(sysUser-> new SystemUser(sysUser.getSystemUserId(),
                         sysUser.getFirstName(),
                         sysUser.getLastName(),
-                        sysUser.getUserName(),
                         sysUser.getPassword(),
                         sysUser.getEmailId() )).collect(Collectors.toList()
                 );
@@ -65,11 +68,12 @@ public class SystemUserServiceImpl implements SystemUserService{
                 = systemUserRepository.findById(id).get();
         systemUserEntity.setFirstName(systemUser.getFirstName());
         systemUserEntity.setLastName(systemUser.getLastName());
-        systemUserEntity.setUserName(systemUser.getUserName());
-        systemUserEntity.setPassword(systemUser.getPassword());
+//        systemUserEntity.setPassword(systemUser.getPassword());
         systemUserEntity.setEmailId(systemUser.getEmailId());
 
         systemUserRepository.save(systemUserEntity);
+
+
         return systemUser;
     }
 }
