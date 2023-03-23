@@ -5,9 +5,9 @@ import com.app.tracko.model.SystemUser;
 import com.app.tracko.service.EmailMessage;
 import com.app.tracko.service.EmailSenderService;
 import com.app.tracko.service.SystemUserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,12 +48,10 @@ public class SystemUserController {
 //        return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
 //    }
 
-
     @GetMapping("/systemusers")
     public List<SystemUser> getAllSystemUsers(){
         return systemUserService.getAllSystemUsers();
     }
-
 
     @DeleteMapping("/systemusers/{id}")
     public ResponseEntity<Map<String,Boolean>> deleteEmployee(@PathVariable Long id){
@@ -68,8 +66,10 @@ public class SystemUserController {
     public ResponseEntity<SystemUser> getSystemUserById(@PathVariable Long id){
         SystemUser systemUser = null;
         systemUser= systemUserService.getSystemUserById(id);
+//        .orElseThrow(()-> new ConfigDataResourceNotFoundException("systemusers not exist with id :"+ id));
         return ResponseEntity.ok(systemUser);
     }
+
     @PutMapping("/systemusers/{id}")
     public ResponseEntity<SystemUser> updateSystemUser(@PathVariable Long id,
                                                        @RequestBody SystemUser systemUser){

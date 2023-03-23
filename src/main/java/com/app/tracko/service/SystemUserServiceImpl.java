@@ -6,6 +6,7 @@ import com.app.tracko.repository.SystemUserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,14 +23,18 @@ public class SystemUserServiceImpl implements SystemUserService{
         this.systemUserRepository = systemUserRepository;
     }
 
+
+
     @Override
     public List<SystemUser> getAllSystemUsers() {
         List<SystemUserEntity> systemUserEntities
                 = systemUserRepository.findAll();
         List<SystemUser> systemUsers= systemUserEntities.stream().
-                map(sysUser-> new SystemUser(sysUser.getSystemUserId(),
+                map(sysUser-> new SystemUser(
+                        sysUser.getSystemUserId(),
                         sysUser.getFirstName(),
                         sysUser.getLastName(),
+                        sysUser.getUserName(),
                         sysUser.getPassword(),
                         sysUser.getEmailId() )).collect(Collectors.toList()
                 );
@@ -37,7 +42,7 @@ public class SystemUserServiceImpl implements SystemUserService{
     }
 
     @Override
-    public SystemUser createSystemUser(SystemUser systemUser) {
+    public SystemUser createSystemUser(@RequestBody SystemUser systemUser) {
         SystemUserEntity systemUserEntity= new SystemUserEntity();
         BeanUtils.copyProperties(systemUser, systemUserEntity);
         systemUserRepository.save(systemUserEntity);
@@ -56,7 +61,6 @@ public class SystemUserServiceImpl implements SystemUserService{
     public SystemUser getSystemUserById(Long id) {
         SystemUserEntity systemUserEntity
                 = systemUserRepository.findById(id).get();
-
         SystemUser systemUser = new SystemUser();
         BeanUtils.copyProperties(systemUserEntity, systemUser);
         return systemUser;
@@ -73,7 +77,10 @@ public class SystemUserServiceImpl implements SystemUserService{
 
         systemUserRepository.save(systemUserEntity);
 
-
         return systemUser;
     }
+
+
+
+
 }

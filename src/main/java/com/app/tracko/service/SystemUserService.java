@@ -5,7 +5,7 @@ import com.app.tracko.model.SystemUser;
 import java.util.List;
 
 
-public interface SystemUserService  {  
+public interface SystemUserService  {
     List<SystemUser> getAllSystemUsers();
 
     SystemUser createSystemUser(SystemUser systemUser);
@@ -15,4 +15,6 @@ public interface SystemUserService  {
     SystemUser getSystemUserById(Long id);
 
     SystemUser updateSystemUser(Long id, SystemUser systemUser);
+
+
 }
