@@ -1,4 +1,12 @@
 package com.app.tracko.repository;
 
-public interface IssueRepository {
+import com.app.tracko.entity.IssueEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface IssueRepository extends JpaRepository<IssueEntity, Long>{
+
 }
+

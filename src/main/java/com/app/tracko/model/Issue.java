@@ -1,4 +1,4 @@
-package com.app.tracko.entity;
+package com.app.tracko.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Issue{
-
     private long IssueId;
     private String ProjectName;
     private String IssueType;
@@ -24,5 +23,6 @@ public class Issue{
     private int TotalSP;
     private String Priority;
     private String Reporter;
+    private String Progress;
 
 }

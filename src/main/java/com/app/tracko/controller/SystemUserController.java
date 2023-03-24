@@ -64,8 +64,7 @@ public class SystemUserController {
 
     @GetMapping("/systemusers/{id}")
     public ResponseEntity<SystemUser> getSystemUserById(@PathVariable Long id){
-        SystemUser systemUser = null;
-        systemUser= systemUserService.getSystemUserById(id);
+        SystemUser systemUser = systemUserService.getSystemUserById(id);
 //        .orElseThrow(()-> new ConfigDataResourceNotFoundException("systemusers not exist with id :"+ id));
         return ResponseEntity.ok(systemUser);
     }

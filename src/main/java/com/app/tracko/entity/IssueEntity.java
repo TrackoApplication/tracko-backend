@@ -1,15 +1,26 @@
 package com.app.tracko.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Entity
 @Data
 @Table(name = "Issues")
-
+@Builder
+@AllArgsConstructor
 public class IssueEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(
+            name = "issue_sequence",
+            sequenceName = "issue_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "issue_sequence"
+    )
     private long IssueId;
     private String ProjectName;
     private String IssueType;
@@ -24,5 +35,9 @@ public class IssueEntity {
     private int TotalSP;
     private String Priority;
     private String Reporter;
+    private String Progress;
 
+    public IssueEntity() {
+
+    }
 }
