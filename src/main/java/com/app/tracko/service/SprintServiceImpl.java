@@ -6,6 +6,9 @@ import com.app.tracko.repository.SprintRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class SprintServiceImpl implements SprintService {
     private SprintRepository sprintRepository;
@@ -21,5 +24,22 @@ public class SprintServiceImpl implements SprintService {
         BeanUtils.copyProperties(sprint,sprintEntity);
         sprintRepository.save(sprintEntity);
         return sprint;
+    }
+
+    @Override
+    public List<Sprint> getAllSprints() {
+        List<SprintEntity> sprintEntities
+                = sprintRepository.findAll();
+
+        List<Sprint> sprints = sprintEntities
+                .stream()
+                .map(spr -> new Sprint(spr.getSprintId(),
+                        spr.getSprintName(),
+                        spr.getDuration(),
+                        spr.getStartDate(),
+                        spr.getEndDate(),
+                        spr.getSprintGoal()))
+                .collect(Collectors.toList());
+        return sprints;
     }
 }
