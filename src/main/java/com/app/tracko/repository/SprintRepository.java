@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SprintRepository extends JpaRepository<SprintEntity, Long>{
 
+public interface SprintRepository extends JpaRepository<SprintEntity, Long> {
 }

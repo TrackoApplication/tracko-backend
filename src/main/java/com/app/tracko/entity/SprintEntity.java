@@ -7,7 +7,8 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "Sprint")
+@Table(name = "Sprints")
+
 public class SprintEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,4 +18,5 @@ public class SprintEntity {
     private Date StartDate;
     private Date EndDate;
     private String SprintGoal;
+
 }

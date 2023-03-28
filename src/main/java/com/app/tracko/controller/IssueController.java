@@ -6,6 +6,9 @@ import com.app.tracko.repository.IssueRepository;
 import com.app.tracko.service.IssueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import com.app.tracko.model.Issue;
+import com.app.tracko.service.IssueService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,11 +24,20 @@ public class IssueController {
     public IssueController(IssueService issueService, IssueRepository issueRepository, IssueRepository issueRepository1, IssueRepository issueRepository2) {
         this.issueService = issueService;
         this.issueRepository = issueRepository2;
+
+public class IssueController {
+
+    @Autowired
+    private final IssueService issueService;
+
+    public IssueController(IssueService issueService) {
+        this.issueService = issueService;
     }
 
     @PostMapping("/issues")
     public Issue createIssue(@RequestBody Issue issue){
         return issueService.createIssue(issue);
+         return issueService.createIssue(issue);
     }
 
     @GetMapping("/issues")

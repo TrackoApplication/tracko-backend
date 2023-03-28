@@ -16,4 +16,7 @@ public interface IssueService {
     Issue getStatus(String status);
 
 //    List<Issue> getAssignee(String assignee);
+    Issue createIssue(Issue issue);
+
+    List<Issue> getAllIssues();
 }
