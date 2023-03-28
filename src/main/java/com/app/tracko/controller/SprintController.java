@@ -1,12 +1,14 @@
 package com.app.tracko.controller;
 
-import com.app.tracko.model.Issue;
 import com.app.tracko.model.Sprint;
 import com.app.tracko.service.SprintService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -27,5 +29,14 @@ public class SprintController {
     @GetMapping("/sprints")
     public List<Sprint> getAllSprints(){
         return sprintService.getAllSprints();
+    }
+
+    @DeleteMapping("/sprints/{SprintId}")
+    public ResponseEntity<Map<String,Boolean>> deleteEmployee(@PathVariable Long SprintId) {
+        boolean deleted = false;
+        deleted = sprintService.deleteSprint(SprintId);
+        Map<String,Boolean> response = new HashMap<>();
+        response.put("deleted", deleted);
+        return ResponseEntity.ok(response);
     }
 }

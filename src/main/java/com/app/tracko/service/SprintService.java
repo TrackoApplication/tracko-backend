@@ -8,4 +8,6 @@ public interface SprintService {
     Sprint createSprint(Sprint sprint);
 
     List<Sprint> getAllSprints();
+
+    boolean deleteSprint(Long sprintId);
 }

@@ -42,4 +42,11 @@ public class SprintServiceImpl implements SprintService {
                 .collect(Collectors.toList());
         return sprints;
     }
+
+    @Override
+    public boolean deleteSprint(Long SprintId) {
+        SprintEntity sprint = sprintRepository.findById(SprintId).get();
+        sprintRepository.delete(sprint);
+        return true;
+    }
 }
