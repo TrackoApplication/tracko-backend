@@ -9,10 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Issue{
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
 public class Issue {
     private long IssueId;
     private String ProjectName;
@@ -30,5 +26,5 @@ public class Issue {
     private String Reporter;
     private String Status;
 
-}
+
 }

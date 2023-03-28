@@ -22,9 +22,6 @@ public class IssueEntity {
             generator = "issue_sequence"
     )
 
-public class IssueEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long IssueId;
     private String ProjectName;
     private String IssueType;
@@ -49,4 +46,4 @@ public class IssueEntity {
 
 }
 
-}
+
