@@ -12,6 +12,7 @@ import java.util.List;
 public interface SystemUserRepository extends JpaRepository<SystemUserEntity, Long> {
 
 
+
 //    boolean existsByEmail(String email);
 //
 //    SystemUser findByEmail(String email);

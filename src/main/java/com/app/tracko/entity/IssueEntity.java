@@ -26,6 +26,7 @@ public class IssueEntity {
     private String IssueType;
     private String Summary;
     private String Description;
+    @Column(name = "Assignee")
     private String Assignee;
     private String SprintName;
     private String EpicName;
@@ -35,9 +36,11 @@ public class IssueEntity {
     private int TotalSP;
     private String Priority;
     private String Reporter;
-    private String Progress;
+    @Column(name = "Status")
+    private String Status;
 
     public IssueEntity() {
 
     }
+
 }

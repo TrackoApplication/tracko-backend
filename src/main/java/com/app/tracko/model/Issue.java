@@ -1,5 +1,6 @@
 package com.app.tracko.model;
 
+import com.app.tracko.entity.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +24,6 @@ public class Issue{
     private int TotalSP;
     private String Priority;
     private String Reporter;
-    private String Progress;
+    private String Status;
 
 }

@@ -1,11 +1,13 @@
 package com.app.tracko.controller;
 
+import com.app.tracko.entity.SystemUserEntity;
 import com.app.tracko.model.SystemUser;
 //import com.app.tracko.service.EmailService;
+import com.app.tracko.repository.SystemUserRepository;
 import com.app.tracko.service.EmailMessage;
 import com.app.tracko.service.EmailSenderService;
 import com.app.tracko.service.SystemUserService;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
@@ -16,14 +18,21 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1")
 public class SystemUserController {
+    @Autowired
     private final SystemUserService systemUserService;
+
+    private final SystemUserRepository systemUserRepository;
+
 //    private final EmailService emailService;
     private final EmailSenderService emailSenderService;
 
-    public SystemUserController(SystemUserService systemUserService, EmailSenderService emailSenderService) {
+
+    public SystemUserController(SystemUserService systemUserService, EmailSenderService emailSenderService, SystemUserRepository systemUserRepository, SystemUserRepository systemUserRepository1) {
         this.systemUserService = systemUserService;
         this.emailSenderService = emailSenderService;
+        this.systemUserRepository = systemUserRepository1;
     }
+
     @PostMapping("/sendemail")
     public ResponseEntity sendEmail(@RequestBody EmailMessage emailMessage){
         this.emailSenderService.sendEmail(
@@ -47,11 +56,19 @@ public class SystemUserController {
 //        emailService.sendVerificationEmail(systemUserEntity.getName(), systemUserEntity.getEmail(), systemUserEntity.getVerificationToken());
 //        return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
 //    }
+//
+//    @GetMapping("/systemusers")
+//    public List<SystemUser> getAllSystemUsers(){
+//      return systemUserService.getAllSystemUsers();
+//    }
 
     @GetMapping("/systemusers")
-    public List<SystemUser> getAllSystemUsers(){
-        return systemUserService.getAllSystemUsers();
+    public List<SystemUserEntity> getAllSystemUsers(){
+      return systemUserRepository.findAll();
     }
+
+
+
 
     @DeleteMapping("/systemusers/{id}")
     public ResponseEntity<Map<String,Boolean>> deleteEmployee(@PathVariable Long id){
@@ -75,4 +92,15 @@ public class SystemUserController {
         systemUser = systemUserService.updateSystemUser(id, systemUser);
         return ResponseEntity.ok(systemUser);
     }
+
+    @PutMapping("/systemusers/{sysid}/{grpid}")
+    public SystemUserEntity assignSystemUserToAccessGroup(
+            @PathVariable Long sysid,
+            @PathVariable Long grpid
+    ){
+        return systemUserService.assignSystemUserToAccessGroup(sysid,grpid);
+    }
+
+
+
 }
