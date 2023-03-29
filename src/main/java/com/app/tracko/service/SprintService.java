@@ -10,4 +10,6 @@ public interface SprintService {
     List<Sprint> getAllSprints();
 
     boolean deleteSprint(Long sprintId);
+
+    long getSprintCount();
 }

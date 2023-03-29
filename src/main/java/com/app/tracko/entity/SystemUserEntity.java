@@ -39,24 +39,22 @@ public class SystemUserEntity{
     private String lastName;
     private String userName;
     private String password;
-
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY , cascade = CascadeType.ALL )
-    @JoinTable(
-            name = "user_access_group",
-            joinColumns = @JoinColumn(name = "system_user_id"),
-            inverseJoinColumns = @JoinColumn(name = "access_group_id")
-    )
-    private Set<AccessGroupEntity> accessGroups;
-
-
     @Column(
             name = "email_address",
             nullable = false
     )
     private String emailId;
 
+
+    @JsonIgnore 
+    @ManyToMany(mappedBy = "accessGroupUsers")
+    private Set<AccessGroupEntity> accessGroupEntities = new HashSet<>();
+
     public SystemUserEntity() {
+    }
+
+    public Set<AccessGroupEntity> getAccessGroupEntities() {
+        return accessGroupEntities;
     }
 
 

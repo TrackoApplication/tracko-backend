@@ -14,11 +14,20 @@ import java.util.List;
 @Repository
 public interface IssueRepository extends JpaRepository<IssueEntity, Long>{
 
-    @Query("SELECT i FROM IssueEntity i WHERE i.Status = :status")
-    IssueEntity findByStatus(@Param("status") String status);
+    @Query("SELECT COUNT(i) FROM IssueEntity i WHERE i.Status = :status")
+    Long findByStatus(String status);
 
     @Query("SELECT i FROM IssueEntity i WHERE i.Assignee = :assignee")
-    IssueEntity findByAssignee(String assignee);
+    List<IssueEntity> findByAssignee(String assignee);
+
+    @Query("SELECT COUNT(i) FROM IssueEntity i WHERE i.TotalSP >= 10 ")
+    Long findByTotalSPHigh();
+
+    @Query("SELECT COUNT(i) FROM IssueEntity i WHERE i.TotalSP < 10 AND i.TotalSP >=5 ")
+    Long findByTotalSPMedium();
+    @Query("SELECT COUNT(i) FROM" +
+            " IssueEntity i WHERE i.TotalSP < 5 ")
+    Long findByTotalSPLow();
 
 
 }

@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "Issues")
+@Table(name = "Issue")
 @Builder
 @AllArgsConstructor
 public class IssueEntity {

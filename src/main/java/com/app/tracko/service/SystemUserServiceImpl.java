@@ -135,14 +135,7 @@ public class SystemUserServiceImpl implements SystemUserService{
 
     @Override
     public SystemUserEntity assignSystemUserToAccessGroup(Long sysid, Long grpid) {
-        Set<AccessGroupEntity> accessGroups = null;
-        SystemUserEntity systemUserEntity = systemUserRepository.findById(sysid).get();
-        AccessGroupEntity accessGroupEntity = accessGroupRepository.findById(grpid).get();
-        accessGroups= systemUserEntity.getAccessGroups();
-        accessGroups.add(accessGroupEntity);
-        systemUserEntity.setAccessGroups(accessGroups);
-       return systemUserRepository.save(systemUserEntity);
-
+        return null;
     }
 
 

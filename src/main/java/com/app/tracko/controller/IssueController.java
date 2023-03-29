@@ -11,7 +11,7 @@ import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/issues")
 public class IssueController {
     private final IssueService issueService;
     private final IssueRepository issueRepository;
@@ -22,28 +22,42 @@ public class IssueController {
     }
 
 
-    @PostMapping("/issues")
+    @PostMapping
     public Issue createIssue(@RequestBody Issue issue){
         return issueService.createIssue(issue);
 
     }
 
-    @GetMapping("/issues")
+    @GetMapping
     public List<Issue> getAllIssues(){
         return issueService.getAllIssues();
     }
 
-    @GetMapping("/issues/count")
+    @GetMapping("/count")
     public long getIssueCount(){
         return issueService.getIssueCount();
     }
 
-    @GetMapping("/issues/{status}")
-    public ResponseEntity<Issue> getStatus(@PathVariable String status){
-        Issue issue = issueService.getStatus(status);
-//        .orElseThrow(()-> new ConfigDataResourceNotFoundException("systemusers not exist with id :"+ id));
-        return ResponseEntity.ok(issue);
+    @GetMapping("/status/{Status}")
+    public long getStatus(@PathVariable String Status){
+        return issueRepository.findByStatus(Status);
     }
+
+    @GetMapping("/highrisk")
+    public long getHighRisk(){
+        return issueRepository.findByTotalSPHigh();
+    }
+
+    @GetMapping("/mediumrisk")
+    public long getMediumRisk(){
+        return issueRepository.findByTotalSPMedium();
+    }
+
+    @GetMapping("/lowrisk")
+    public long getLowRisk(){
+        return issueRepository.findByTotalSPLow();
+    }
+
 
 //    @GetMapping("/issues/{Assignee}")
 //    public ResponseEntity<Issue> getAssignee(@PathVariable String Assignee){
@@ -51,9 +65,9 @@ public class IssueController {
 //        return ResponseEntity.ok(issue);
 //    }
 
-        @GetMapping("/issuesc/{Assignee}")
+        @GetMapping("/{Assignee}")
         public List<IssueEntity> getAssignee(@PathVariable String Assignee){
-            return (List<IssueEntity>) issueRepository.findByAssignee(Assignee);
+            return issueRepository.findByAssignee(Assignee);
         }
 
 

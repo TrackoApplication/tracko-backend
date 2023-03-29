@@ -64,14 +64,14 @@ public class IssueServiceImpl implements IssueService{
         return issueRepository.count();
     }
 
-    @Override
-    public Issue getStatus(String status) {
-        IssueEntity issueEntity
-                = issueRepository.findByStatus(status);
-        Issue issue = new Issue();
-        BeanUtils.copyProperties(issueEntity, issue);
-        return issue;
-    }
+//    @Override
+//    public Issue getStatus(String status) {
+//        IssueEntity issueEntity
+//                = issueRepository.findByStatus(status);
+//        Issue issue = new Issue();
+//        BeanUtils.copyProperties(issueEntity, issue);
+//        return issue;
+//    }
 
 //    @Override
 //    public List<Issue> getAssignee(String assignee) {

@@ -44,4 +44,10 @@ public class SprintController {
         response.put("deleted", deleted);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/sprints/count")
+    public long getSprintCount(){
+        return sprintService.getSprintCount();
+    }
+
 }

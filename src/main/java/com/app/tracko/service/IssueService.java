@@ -10,7 +10,7 @@ public interface IssueService {
 
     long getIssueCount();
 
-    Issue getStatus(String status);
+//    Issue getStatus(String status);
 
 //    List<Issue> getAssignee(String assignee);
     Issue createIssue(Issue issue);

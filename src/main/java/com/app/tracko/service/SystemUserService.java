@@ -2,7 +2,6 @@ package com.app.tracko.service;
 
 import com.app.tracko.entity.SystemUserEntity;
 import com.app.tracko.model.SystemUser;
-import com.app.tracko.model.SystemUserDTO;
 
 import java.util.List;
 

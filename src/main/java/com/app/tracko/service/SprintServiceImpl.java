@@ -49,4 +49,9 @@ public class SprintServiceImpl implements SprintService {
         sprintRepository.delete(sprint);
         return true;
     }
+
+    @Override
+    public long getSprintCount() {
+        return sprintRepository.count();
+    }
 }

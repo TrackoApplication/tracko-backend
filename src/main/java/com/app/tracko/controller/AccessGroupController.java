@@ -1,13 +1,12 @@
 package com.app.tracko.controller;
 
 import com.app.tracko.entity.AccessGroupEntity;
-import com.app.tracko.model.AccessGroup;
+import com.app.tracko.entity.SystemUserEntity;
 import com.app.tracko.repository.AccessGroupRepository;
-import com.app.tracko.service.AccessGroupService;
+import com.app.tracko.repository.SystemUserRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -15,10 +14,12 @@ import java.util.stream.Collectors;
 public class AccessGroupController {
 
     private final AccessGroupRepository accessGroupRepository;
+    private final SystemUserRepository systemUserRepository;
 
-    public AccessGroupController(AccessGroupRepository accessGroupRepository) {
+    public AccessGroupController(AccessGroupRepository accessGroupRepository, SystemUserRepository systemUserRepository) {
 
         this.accessGroupRepository = accessGroupRepository;
+        this.systemUserRepository = systemUserRepository;
     }
 
 //    @GetMapping
@@ -26,7 +27,7 @@ public class AccessGroupController {
 //        return accessGroupRepository.findAll();
 //    }
 
-    @PostMapping
+    @PostMapping("/create")
     public AccessGroupEntity createAccessGroup(@RequestBody  AccessGroupEntity accessGroupEntity){
         accessGroupRepository.save(accessGroupEntity);
         return accessGroupEntity;
@@ -45,10 +46,19 @@ public class AccessGroupController {
 //        return accessGroups;
 //    }
 
-    @GetMapping
+    @GetMapping("/ view")
     public List<AccessGroupEntity> getAccessGroups(){
-        List<AccessGroupEntity> accessGroupEntities
-                = accessGroupRepository.findAll();
-        return accessGroupEntities;
+        return accessGroupRepository.findAll();
+    }
+
+    @PutMapping("/{grpid}/systemusers/{sysid}")
+    AccessGroupEntity accessGroupAssignedUsers(
+            @PathVariable Long grpid,
+            @PathVariable Long sysid
+    ){
+        AccessGroupEntity accessGroupEntity = accessGroupRepository.findById(grpid).get();
+        SystemUserEntity systemUserEntity = systemUserRepository.findById(sysid).get( );
+        accessGroupEntity.assignAccessGroupToUser(systemUserEntity);
+        return accessGroupRepository.save(accessGroupEntity);
     }
 }

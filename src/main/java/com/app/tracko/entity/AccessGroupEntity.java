@@ -5,9 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.app.tracko.entity.SystemUserEntity;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,11 +21,16 @@ public class AccessGroupEntity {
     private long accessGroupId;
     private String accessGroupName;
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "accessGroups",
-            fetch = FetchType.LAZY
+    @ManyToMany
+    @JoinTable(
+            name = "user_access_group",
+            joinColumns = @JoinColumn(name = "access_group_Id"),
+            inverseJoinColumns = @JoinColumn(name = "system_user_id")
     )
-    private Set<SystemUserEntity> systemUserEntities ;
+    private Set<SystemUserEntity> accessGroupUsers = new HashSet<>();
 
 
+    public void assignAccessGroupToUser(SystemUserEntity systemUserEntity) {
+        accessGroupUsers.add(systemUserEntity);
+    }
 }
