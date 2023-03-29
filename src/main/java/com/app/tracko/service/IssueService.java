@@ -8,4 +8,6 @@ public interface IssueService {
     Issue createIssue(Issue issue);
 
     List<Issue> getAllIssues();
+
+    boolean deleteIssue(Long issueId);
 }

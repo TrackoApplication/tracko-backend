@@ -3,7 +3,9 @@ package com.app.tracko.service;
 import com.app.tracko.entity.SprintEntity;
 import com.app.tracko.model.Sprint;
 import com.app.tracko.repository.SprintRepository;
+import com.sun.mail.iap.Response;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,5 +50,25 @@ public class SprintServiceImpl implements SprintService {
         SprintEntity sprint = sprintRepository.findById(SprintId).get();
         sprintRepository.delete(sprint);
         return true;
+    }
+
+    @Override
+    public Sprint getSprintById(Long sprintId) {
+        SprintEntity sprintEntity = sprintRepository.findById(sprintId).get();
+        Sprint sprint = new Sprint();
+        BeanUtils.copyProperties(sprintEntity,sprint);
+        return sprint;
+    }
+
+    @Override
+    public Sprint updateSprint(Long sprintId, Sprint sprint) {
+        SprintEntity sprintEntity = sprintRepository.findById(sprintId).get();
+        sprintEntity.setSprintName(sprint.getSprintName());
+        sprintEntity.setStartDate(sprint.getStartDate());
+        sprintEntity.setEndDate(sprint.getEndDate());
+        sprintEntity.setSprintGoal(sprint.getSprintGoal());
+
+        sprintRepository.save(sprintEntity);
+        return sprint;
     }
 }

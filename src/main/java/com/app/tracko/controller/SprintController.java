@@ -39,4 +39,17 @@ public class SprintController {
         response.put("deleted", deleted);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/sprints/{SprintId}")
+    public ResponseEntity<Sprint> getSprintById(@PathVariable Long SprintId) {
+        Sprint sprint = null;
+        sprint = sprintService.getSprintById(SprintId);
+        return ResponseEntity.ok(sprint);
+    }
+
+    @PutMapping("/sprints/{SprintId}")
+    public ResponseEntity<Sprint> updateSprint(@PathVariable Long SprintId, @RequestBody Sprint sprint) {
+        sprint = sprintService.updateSprint(SprintId, sprint);
+        return ResponseEntity.ok(sprint);
+    }
 }

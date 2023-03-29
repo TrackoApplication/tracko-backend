@@ -50,4 +50,11 @@ public class IssueServiceImpl implements IssueService{
                 .collect(Collectors.toList());
         return issues;
     }
+
+    @Override
+    public boolean deleteIssue(Long IssueId) {
+        IssueEntity issue = issueRepository.findById(IssueId).get();
+        issueRepository.delete(issue);
+        return true;
+    }
 }
