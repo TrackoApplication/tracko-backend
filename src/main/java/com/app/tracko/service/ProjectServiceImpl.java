@@ -6,6 +6,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
@@ -22,5 +25,21 @@ public class ProjectServiceImpl implements ProjectService {
         BeanUtils.copyProperties(project,projectEntity);
         projectRepository.save(projectEntity);
         return project;
+    }
+
+    @Override
+    public List<Project> getAllProjects() {
+        List<ProjectEntity> projectEntities=projectRepository.findAll();
+        List<Project> projects=projectEntities
+                .stream()
+                .map(pro->new Project(
+                        pro.getId(),
+                        pro.getProjectName(),
+                        pro.getImageURL(),
+                        pro.getDescription(),
+                        pro.getClient(),
+                        pro.getProjectLead()))
+                .collect(Collectors.toList());
+        return projects;
     }
 }

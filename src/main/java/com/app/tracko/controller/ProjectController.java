@@ -4,7 +4,9 @@ import com.app.tracko.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins ="http://localhost:3002" )
+import java.util.List;
+
+@CrossOrigin(origins ="http://localhost:3000" )
 @RestController
 @RequestMapping("/api/v1/")
 
@@ -23,6 +25,13 @@ public class ProjectController {
     public Project createProject(@RequestBody Project project){
         return projectService.createProject(project);
     }
+
+    @GetMapping("/project")
+    public List<Project> getAllProjects(){
+        return projectService.getAllProjects();
+    }
+
+
 
 
 
