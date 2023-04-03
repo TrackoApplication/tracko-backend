@@ -1,11 +1,12 @@
 package com.app.tracko.controller;
+import com.app.tracko.model.Project;
 import com.app.tracko.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins ="http://localhost:3002" )
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/")
 
 public class ProjectController {
 
@@ -17,6 +18,15 @@ public class ProjectController {
     {
         this.projectService = projectService;
     }
+
+    @PostMapping("/project")
+    public Project createProject(@RequestBody Project project){
+        return projectService.createProject(project);
+    }
+
+
+
+
 
 
 

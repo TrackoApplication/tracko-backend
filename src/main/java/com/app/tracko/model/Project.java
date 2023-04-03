@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Project {
     private long id;
-    private String ProjectName;
-    private String Description;
-    private String Client;
+    private String projectName;
+    private String imageURL;
+    private String description;
+    private String client;
+    private String projectLead;
 }

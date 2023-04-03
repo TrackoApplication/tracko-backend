@@ -9,11 +9,11 @@ public class ProjectEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String ProjectName;
-    private String ImageURL;
-    private String Description;
-    private String Client;
-    private String ProjectLead;
+    private String projectName;
+    private String imageURL;
+    private String description;
+    private String client;
+    private String projectLead;
 
 
 }
