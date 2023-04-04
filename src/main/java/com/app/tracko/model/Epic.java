@@ -9,9 +9,15 @@ import lombok.NoArgsConstructor;
 
 public class Epic {
     private long id;
-    private String Name;
-    private String Reporter;
-    private String Description;
-    private String Priority;
-    private String Team;
+    private String project;
+    private String epicName;
+    private String epicSummary;
+    private String reporter;
+    private String epicDescription;
+    private String priority;
+    private String assignee;
+    private String team;
+    private String targetStart;
+    private String targetEnd;
+    private String storyPoints;
 }
