@@ -9,4 +9,6 @@ public interface ProjectService {
     Project createProject(Project project);
 
     List<Project> getAllProjects();
+
+    boolean deleteProject(Long id);
 }

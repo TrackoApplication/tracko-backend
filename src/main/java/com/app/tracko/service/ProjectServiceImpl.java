@@ -42,4 +42,11 @@ public class ProjectServiceImpl implements ProjectService {
                 .collect(Collectors.toList());
         return projects;
     }
+
+    @Override
+    public boolean deleteProject(Long id) {
+        ProjectEntity project = projectRepository.findById(id).get();
+        projectRepository.delete(project);
+        return true;
+    }
 }
