@@ -1,10 +1,11 @@
 package com.app.tracko.controller;
 
+import com.app.tracko.entity.TeamEntity;
+import com.app.tracko.model.Issue;
 import com.app.tracko.service.TeamService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -20,4 +21,16 @@ public class TeamController {
     public long getTeamCount(){
         return teamService.getTeamCount();
     }
+
+    @PostMapping
+    public TeamEntity createTeams(@RequestBody TeamEntity team){
+        return teamService.createTeams(team);
+    }
+
+    @GetMapping
+    public List<TeamEntity> getAllTeams(){
+        return teamService.getAllTeams();
+    }
+
+
 }

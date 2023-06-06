@@ -1,18 +1,20 @@
 package com.app.tracko.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Data
-@Table(name="AccessGroup")
+@Table(name="AccessGroup",
+        uniqueConstraints = @UniqueConstraint(
+        name = "accessGroupName_unique",
+        columnNames = "accessGroupName"
+))
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccessGroupEntity {
@@ -20,17 +22,15 @@ public class AccessGroupEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long accessGroupId;
     private String accessGroupName;
+    private String groupDescription;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_access_group",
-            joinColumns = @JoinColumn(name = "access_group_Id"),
-            inverseJoinColumns = @JoinColumn(name = "system_user_id")
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "access_access_group",
+            joinColumns = {@JoinColumn(name = "access_group_fk")},
+            inverseJoinColumns = {@JoinColumn(name = "access_fk")}
     )
-    private Set<SystemUserEntity> accessGroupUsers = new HashSet<>();
+    private List<AccessEntity> accesses = new ArrayList<>();
 
 
-    public void assignAccessGroupToUser(SystemUserEntity systemUserEntity) {
-        accessGroupUsers.add(systemUserEntity);
-    }
+
 }

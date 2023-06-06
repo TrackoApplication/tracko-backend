@@ -1,12 +1,12 @@
-package com.app.tracko.controller;
-
-import com.app.tracko.service.EmailMessage;
-import com.app.tracko.service.EmailSenderService;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+//package com.app.tracko.controller;
+//
+//import com.app.tracko.service.EmailMessage;
+//import com.app.tracko.service.EmailSenderService;
+//import org.springframework.http.RequestEntity;
+//import org.springframework.http.ResponseEntity;
+//import org.springframework.web.bind.annotation.PostMapping;
+//import org.springframework.web.bind.annotation.RequestBody;
+//import org.springframework.web.bind.annotation.RestController;
 
 //@RestController
 //public class EmailController {

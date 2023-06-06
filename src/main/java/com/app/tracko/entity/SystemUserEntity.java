@@ -1,20 +1,23 @@
 package com.app.tracko.entity;
 
 import com.app.tracko.entity.AccessGroupEntity;
+import com.app.tracko.token.Token;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Data
 @Table(
-        name="SystemUser",
+        name="system_user",
         uniqueConstraints = @UniqueConstraint(
                 name = "emailid_unique",
                 columnNames = "email_address"
@@ -23,7 +26,7 @@ import java.util.Set;
 
 @Builder
 @AllArgsConstructor
-public class SystemUserEntity{
+public class SystemUserEntity implements UserDetails {
     @Id
     @SequenceGenerator(
             name = "systemUser_sequence",
@@ -34,10 +37,9 @@ public class SystemUserEntity{
             strategy = GenerationType.SEQUENCE,
             generator = "systemUser_sequence"
     )
-    private long SystemUserId;
+    private long systemUserId;
     private String firstName;
     private String lastName;
-    private String userName;
     private String password;
     @Column(
             name = "email_address",
@@ -45,21 +47,44 @@ public class SystemUserEntity{
     )
     private String emailId;
 
+    private String accessGroup = "Not Assigned";
+    @Enumerated(EnumType.STRING)
+    private Role role;
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
 
-    @JsonIgnore 
-    @ManyToMany(mappedBy = "accessGroupUsers")
-    private Set<AccessGroupEntity> accessGroupEntities = new HashSet<>();
 
     public SystemUserEntity() {
     }
 
-    public Set<AccessGroupEntity> getAccessGroupEntities() {
-        return accessGroupEntities;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
+    @Override
+    public String getUsername() {
+        return emailId;
+    }
 
-    //  @Column(name = "verification_token")
-//  private String verificationToken;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

@@ -15,7 +15,7 @@ public class TeamEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long TeamId;
-    private String Name;
+    private String teamName;
 
     public TeamEntity() {
 

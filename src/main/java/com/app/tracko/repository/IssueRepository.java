@@ -25,6 +25,7 @@ public interface IssueRepository extends JpaRepository<IssueEntity, Long>{
 
     @Query("SELECT COUNT(i) FROM IssueEntity i WHERE i.TotalSP < 10 AND i.TotalSP >=5 ")
     Long findByTotalSPMedium();
+
     @Query("SELECT COUNT(i) FROM" +
             " IssueEntity i WHERE i.TotalSP < 5 ")
     Long findByTotalSPLow();

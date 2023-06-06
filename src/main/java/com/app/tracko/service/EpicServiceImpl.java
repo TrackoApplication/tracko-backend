@@ -1,6 +1,9 @@
 package com.app.tracko.service;
 
+import com.app.tracko.entity.EpicEntity;
+import com.app.tracko.entity.IssueEntity;
 import com.app.tracko.repository.EpicRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,4 +18,13 @@ public class EpicServiceImpl implements EpicService{
     public long getIssueCount() {
         return epicRepository.count();
     }
+
+    @Override
+    public EpicEntity createEpic(EpicEntity epic) {
+        epicRepository.save(epic);
+        return epic;
+    }
+
+
+
 }

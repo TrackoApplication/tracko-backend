@@ -1,11 +1,12 @@
 package com.app.tracko.controller;
 
 
+import com.app.tracko.entity.PeopleEntity;
+import com.app.tracko.entity.SystemUserEntity;
 import com.app.tracko.service.PeopleService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -23,4 +24,17 @@ public class PeopleController {
     public long getPeopleCount(){
         return peopleService.getPeopleCount();
     }
+
+    @GetMapping
+    public List<PeopleEntity> getAllPeoples(){
+        return peopleService.getAllPeoples();
+    }
+
+    @PostMapping
+    public PeopleEntity createPeople (@RequestBody PeopleEntity peopleEntity)
+    {
+        return peopleService.createPeople(peopleEntity);
+    }
+
+   
 }

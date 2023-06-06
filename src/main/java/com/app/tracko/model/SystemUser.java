@@ -16,8 +16,11 @@ public class SystemUser {
     private long SystemUserId;
     private String firstName;
     private String lastName;
-    private String userName;
     private String password;
     private String emailId;
+    private String accessGroup;
+    private String role = "System User";
+
+
 
 }
