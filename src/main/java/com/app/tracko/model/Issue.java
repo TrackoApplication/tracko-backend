@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+
 public class Issue {
     private long IssueId;
     private String ProjectName;

@@ -5,12 +5,12 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "Issues")
+@Table(name = "SprintIssues")
 
-public class IssueEntity {
+public class SprintIssueEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long IssueId;
+    private long SprintIssueId;
     private String ProjectName;
     private String IssueType;
     private String Summary;

@@ -1,16 +1,15 @@
-package com.app.tracko.entity;
+package com.app.tracko.model;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
-@Table(name = "Issues")
 
-public class IssueEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long IssueId;
+public class SprintIssue {
+    private long SprintIssueId;
     private String ProjectName;
     private String IssueType;
     private String Summary;
