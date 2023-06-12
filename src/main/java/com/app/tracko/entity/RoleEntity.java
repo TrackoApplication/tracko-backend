@@ -4,22 +4,20 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 
-import java.util.ArrayList;
 import java.util.List;
-
 
 @Entity
 @Data
-@Table(name="Access")
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccessEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long accessId;
-    private String accessName;
+public class RoleEntity  {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long roleId;
+    private String role;
 
 
 }
+
 

@@ -13,8 +13,8 @@ import lombok.Data;
 public class PeopleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long PeopleId;
-    private String PeopleName;
+    private long peopleId;
+    private String peopleName;
 
     public PeopleEntity() {
 

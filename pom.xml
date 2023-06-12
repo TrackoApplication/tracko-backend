@@ -12,7 +12,7 @@
 	<artifactId>tracko</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>tracko</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Employee performance monitoring system</description>
 	<properties>
 		<java.version>19</java.version>
 	</properties>

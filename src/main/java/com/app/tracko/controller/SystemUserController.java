@@ -5,20 +5,21 @@ import com.app.tracko.exception.SystemUserNotFoundException;
 
 import com.app.tracko.model.SystemUser;
 
-//import com.app.tracko.service.EmailService;
 
 import com.app.tracko.model.SystemUserDto;
 import com.app.tracko.repository.SystemUserRepository;
+import com.app.tracko.service.EmailSender;
 import com.app.tracko.service.SystemUserService;
 
+import jakarta.mail.MessagingException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = {"Authorization"})
 @RestController
 @RequestMapping("/api/v1")
 public class SystemUserController {
@@ -26,44 +27,20 @@ public class SystemUserController {
     private final SystemUserService systemUserService;
     private final SystemUserRepository systemUserRepository;
 
+    private final JavaMailSender mailSender;
 
-    public SystemUserController(SystemUserService systemUserService, SystemUserRepository systemUserRepository) {
+    public SystemUserController(SystemUserService systemUserService, SystemUserRepository systemUserRepository, JavaMailSender mailSender) {
         this.systemUserService = systemUserService;
         this.systemUserRepository = systemUserRepository;
+        this.mailSender = mailSender;
     }
 
-//    private final EmailService emailService;
-//    private final EmailSenderService emailSenderService;
-
-
-//    @PostMapping("/sendemail")
-//    public ResponseEntity sendEmail(@RequestBody EmailMessage emailMessage){
-//        this.emailSenderService.sendEmail(
-//                emailMessage.getToEmail(),
-//                emailMessage.getBody(),
-//                emailMessage.getSubject());
-//        return ResponseEntity.ok("success");
-//    }
 
     @PostMapping("/systemusers")
     public SystemUserEntity createSystemUser(@RequestBody SystemUserEntity systemUserEntity) {
         return systemUserService.createSystemUser(systemUserEntity);
     }
 
-//    @PostMapping("/register")
-//    public ResponseEntity<String> register(@RequestBody SystemUser systemUser) {
-//        SystemUserEntity systemUserEntity = SystemUserService.register(systemUser);
-//        if (systemUserEntity == null) {
-//            return new ResponseEntity<>("Email already exists", HttpStatus.BAD_REQUEST);
-//        }
-//        emailService.sendVerificationEmail(systemUserEntity.getName(), systemUserEntity.getEmail(), systemUserEntity.getVerificationToken());
-//        return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
-//    }
-//
-//    @GetMapping("/systemusers")
-//    public List<SystemUser> getAllSystemUsers(){
-//      return systemUserService.getAllSystemUsers();
-//    }
 
     @GetMapping("/systemusers")
     public List<SystemUserEntity> getAllSystemUsers() {
@@ -76,15 +53,12 @@ public class SystemUserController {
     }
 
 
-
-
     @DeleteMapping("/systemusers/{id}")
-    public ResponseEntity<Map<String, Boolean>> deleteEmployee(@PathVariable Long id) {
-        boolean deleted = false;
-        deleted = systemUserService.deleteSystemUsers(id);
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("sysytem Deleted Successfully", deleted);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<String> deleteEmployee(@PathVariable Long id) {
+        SystemUserEntity systemUserEntity =systemUserRepository.findById(id).get();
+        systemUserEntity.setIsDeleted(true);
+        systemUserRepository.save(systemUserEntity);
+        return ResponseEntity.ok("user deleted succesfully");
     }
 
     @GetMapping("/systemusers/{id}")
@@ -93,11 +67,47 @@ public class SystemUserController {
     }
 
     @PutMapping("/systemusers/{id}")
-    public ResponseEntity<SystemUser> updateSystemUser(@PathVariable Long id,
-                                                       @RequestBody SystemUser systemUser) {
+    public ResponseEntity<SystemUser> updateSystemUser(@PathVariable Long id, @RequestBody SystemUser systemUser) {
         systemUser = systemUserService.updateSystemUser(id, systemUser);
         return ResponseEntity.ok(systemUser);
     }
 
+    //get email id from the forgot password link
+    @PostMapping("/auth/forgotpassword")
+    public String processForgotPassword(@RequestBody Map<String, String> request) throws SystemUserNotFoundException, MessagingException, UnsupportedEncodingException {
+        String email = request.get("email");
+        UUID randomUUID = UUID.randomUUID();
+        String token = randomUUID.toString().replaceAll("_", "");
+
+        systemUserService.updateResetPasswordToken(token, email);
+        Optional<SystemUserEntity> userR = systemUserRepository.findByEmailId(email);
+        Optional<String> userName = userR.map(SystemUserEntity::getFirstName);
+
+            String name = userName.get();
+
+        EmailSender emailSender = new EmailSender(mailSender);
+        String resetPasswordLink = "http://localhost:3000/reset_password?token=" + token;
+        String subject = "Here is your link to reset your password";
+        String content = "<p style=\"font-family: Arial, sans-serif; font-size: 14px; color: #333333;\">Hello "+name+" ,</p>"
+                + "<p style=\"font-family: Arial, sans-serif; font-size: 14px; color: #333333;\">You have requested to reset your password</p>"
+                + "<p style=\"font-family: Arial, sans-serif; font-size: 14px; color: #333333;\">Click the button below to reset your password:</p>"
+                + "<p><a href=\"" + resetPasswordLink + "\" style=\"display: inline-block; font-family: Arial, sans-serif; font-size: 14px; color: #ffffff; background-color: #007bff; text-decoration: none; padding: 10px 20px; border-radius: 5px;\">Change my Password</a></p>"
+                + "<p style=\"font-family: Arial, sans-serif; font-size: 14px; color: #333333;\">If you didn't request this, please ignore this email.</p>";
+
+        emailSender.sendEmail(email, subject, content);
+        return "Email sent successfully.";
+    }
+
+    @PostMapping("/auth/resetpassword")
+    public String resetPassword(@RequestBody Map<String, String> request) {
+        String token = request.get("token");
+        String password = request.get("password");
+        SystemUserEntity systemUserEntity = systemUserService.getByResetPasswordToken(token);
+
+        systemUserService.updatePassword(password, systemUserEntity);
+
+        return "you have changed the password";
+
+    }
 
 }

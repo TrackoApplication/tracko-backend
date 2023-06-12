@@ -19,6 +19,7 @@ public class SystemUser {
     private String password;
     private String emailId;
     private String accessGroup;
+    private String resetPasswordToken;
     private String role = "System User";
 
 

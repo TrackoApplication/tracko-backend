@@ -67,7 +67,7 @@ public class AccessGroupController {
 //    }
 //
 //
-    @GetMapping
+    @GetMapping("/dto")
     public List<AccessGroupDto> getAllAccessGroups() {
         List<AccessGroupEntity> accessGroupEntity = accessGroupService.getAllAccessGroups();
         List<AccessGroupDto> accessGroupDtos = new ArrayList<>();
@@ -130,6 +130,22 @@ public class AccessGroupController {
         return ResponseEntity.ok("Successfully Updated AccessGroup");
     }
 
+    @GetMapping()
+    public AccessGroupEntity getAccessGroupById(@RequestParam Long id){
+       return accessGroupRepository.findById(id).get();
+
+    }
+    @GetMapping("/all")
+    public List<AccessGroupEntity> getAllAccessGroup(){
+        return accessGroupRepository.findAll();
+    }
+
+    @GetMapping("/perGroup")
+    public List<AccessEntity> getAaccessesOfGroup(@RequestParam Long id){
+        AccessGroupEntity accessGroupEntity = accessGroupRepository.findById(id).get();
+        List<AccessEntity> accessEntities = accessGroupEntity.getAccesses();
+        return accessEntities;
+    }
 
 
     }

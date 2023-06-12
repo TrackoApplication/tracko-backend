@@ -17,6 +17,7 @@ public class TeamEntity {
     private long TeamId;
     private String teamName;
 
+
     public TeamEntity() {
 
     }

@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Table(name = "Epic")
 @Builder
@@ -13,8 +15,14 @@ import lombok.Data;
 public class EpicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long EpicId;
-    private String EpicName;
+    private long epicId;
+    private String epicName;
+
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            mappedBy = "epicEntity" )
+    private List<ChildIssueEntity> childIssueEntity ;
 
     public EpicEntity() {
 

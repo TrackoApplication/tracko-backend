@@ -46,13 +46,15 @@ public class SystemUserEntity implements UserDetails {
             nullable = false
     )
     private String emailId;
+    private Boolean isDeleted = false;
 
     private String accessGroup = "Not Assigned";
     @Enumerated(EnumType.STRING)
     private Role role;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user" , cascade = CascadeType.ALL)
     private List<Token> tokens;
 
+    private String resetPasswordToken;
 
     public SystemUserEntity() {
     }

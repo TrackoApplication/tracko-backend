@@ -24,12 +24,19 @@ public class AccessGroupEntity {
     private String accessGroupName;
     private String groupDescription;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL , fetch = FetchType.EAGER)
     @JoinTable(name = "access_access_group",
             joinColumns = {@JoinColumn(name = "access_group_fk")},
             inverseJoinColumns = {@JoinColumn(name = "access_fk")}
     )
-    private List<AccessEntity> accesses = new ArrayList<>();
+    private List<AccessEntity> accesses ;
+
+    public void addAccessToAccessGroup(AccessEntity accessEntity){
+        if (accessEntity!= null){
+            accesses.add(accessEntity);
+        }
+    }
+
 
 
 

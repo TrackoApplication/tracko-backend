@@ -8,6 +8,7 @@ import com.app.tracko.model.SystemUserDto;
 import com.app.tracko.repository.AccessGroupRepository;
 import com.app.tracko.repository.SystemUserRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -62,6 +63,7 @@ public class SystemUserServiceImpl implements SystemUserService {
         systemUserEntity.setFirstName(systemUser.getFirstName());
         systemUserEntity.setLastName(systemUser.getLastName());
         systemUserEntity.setAccessGroup(systemUser.getAccessGroup());
+        systemUserEntity.setResetPasswordToken(systemUser.getResetPasswordToken());
 //        systemUserEntity.setPassword(systemUser.getPassword());
         systemUserEntity.setEmailId(systemUser.getEmailId());
 
@@ -70,23 +72,56 @@ public class SystemUserServiceImpl implements SystemUserService {
         return systemUser;
     }
 
+    @Override
+    public String updateResetPasswordToken(String token, String email) throws SystemUserNotFoundException {
+
+        Optional<SystemUserEntity> optionalSystemUserEntity = systemUserRepository.findByEmailId(email);
+        if (optionalSystemUserEntity.isPresent()) {
+            SystemUserEntity systemUserEntity = optionalSystemUserEntity.get();
+            systemUserEntity.setResetPasswordToken(token);
+            systemUserRepository.save(systemUserEntity);
+            return "hi";
+        } else {
+            throw new SystemUserNotFoundException("Could not find user with email");
+        }
+    }
+
+
+    public SystemUserEntity getByResetPasswordToken(String resetPasswordToken){
+        return systemUserRepository.findByResetPasswordToken(resetPasswordToken).get();
+    }
+
+    public void updatePassword(String newPassword, SystemUserEntity systemUserEntity){
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodePassword = passwordEncoder.encode(newPassword);
+        systemUserEntity.setPassword(encodePassword);
+        systemUserRepository.save(systemUserEntity);
+    }
+
+
 
     @Override
     public ResponseEntity<List<SystemUserDto>> getSystemUsersDetails() {
         List<SystemUserEntity> systemUserEntity = systemUserRepository.findAll();
         List<SystemUserDto> systemUserDtos = new ArrayList<>();
 
-        for (SystemUserEntity user : systemUserEntity){
-            SystemUserDto systemUserDto = new SystemUserDto();
-            systemUserDto.setFirstName(user.getFirstName());
-            systemUserDto.setRole(user.getRole());
-            systemUserDto.setAccessGroup(user.getAccessGroup());
+        for (SystemUserEntity user : systemUserEntity) {
+            if (user.getIsDeleted() == null) {
+                SystemUserDto systemUserDto = new SystemUserDto();
+                systemUserDto.setSystemUserId(user.getSystemUserId());
+                systemUserDto.setFirstName(user.getFirstName());
+                systemUserDto.setLastName(user.getLastName()); // Corrected line
+                systemUserDto.setEmailId(user.getEmailId());
+                systemUserDto.setRole(user.getRole());
+                systemUserDto.setAccessGroup(user.getAccessGroup());
 
-            systemUserDtos.add(systemUserDto);
+                systemUserDtos.add(systemUserDto);
+            }
         }
 
         return ResponseEntity.ok(systemUserDtos);
     }
+
 
 
 }

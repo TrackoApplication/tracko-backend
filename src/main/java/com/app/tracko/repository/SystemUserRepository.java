@@ -11,9 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface SystemUserRepository extends JpaRepository<SystemUserEntity, Long> {
+    Optional<SystemUserEntity> findByResetPasswordToken(String token);
     Optional<SystemUserEntity> findByEmailId(String email);
 
-//    boolean existsByEmail(String email);
-//
-//    SystemUser findByEmail(String email);
 }
