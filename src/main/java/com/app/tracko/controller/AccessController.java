@@ -2,6 +2,7 @@ package com.app.tracko.controller;
 
 import com.app.tracko.entity.AccessEntity;
 import com.app.tracko.entity.AccessGroupEntity;
+import com.app.tracko.model.AccessDto;
 import com.app.tracko.repository.AccessGroupRepository;
 import com.app.tracko.repository.AccessRepository;
 import org.springframework.http.HttpStatus;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000","http://localhost:3001","http://localhost:3002","http://localhost:3002"})
 @RestController
 @RequestMapping("/api/v1/access")
 public class AccessController {
@@ -51,6 +52,8 @@ public class AccessController {
 //        return ResponseEntity.ok("succesfully updated Access");
 //
 //    }
+
+
 
 
 

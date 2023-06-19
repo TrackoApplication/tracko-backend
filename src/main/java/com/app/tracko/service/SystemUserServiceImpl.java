@@ -1,18 +1,20 @@
 package com.app.tracko.service;
 
+import com.app.tracko.entity.AccessGroupEntity;
 import com.app.tracko.entity.SystemUserEntity;
 import com.app.tracko.exception.SystemUserNotFoundException;
-import com.app.tracko.model.SystemUser;
 
 import com.app.tracko.model.SystemUserDto;
 import com.app.tracko.repository.AccessGroupRepository;
 import com.app.tracko.repository.SystemUserRepository;
+import jakarta.mail.MessagingException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,55 +23,61 @@ import java.util.Optional;
 public class SystemUserServiceImpl implements SystemUserService {
 
     private final SystemUserRepository systemUserRepository;
-    private AccessGroupRepository accessGroupRepository;
+    private final AccessGroupRepository accessGroupRepository;
+    private final JavaMailSender mailSender;
 
-    public SystemUserServiceImpl(SystemUserRepository systemUserRepository) {
+    public SystemUserServiceImpl(SystemUserRepository systemUserRepository, AccessGroupRepository accessGroupRepository, JavaMailSender mailSender) {
         this.systemUserRepository = systemUserRepository;
+        this.accessGroupRepository = accessGroupRepository;
+        this.mailSender = mailSender;
     }
 
 
-    @Override
-    public List<SystemUserEntity> getAllSystemUsers() {
-        return systemUserRepository.findAll();
-    }
+//    @Override
+//    public List<SystemUserEntity> getAllSystemUsers() {
+//        return systemUserRepository.findAll();
+//    }
+//
+
+//    @Override
+//    public boolean deleteSystemUsers(Long id) {
+//        SystemUserEntity systemUser = systemUserRepository.findById(id).get();
+//        systemUserRepository.delete(systemUser);
+//        return true;
+//    }
+
 
     @Override
-    public SystemUserEntity createSystemUser(@RequestBody SystemUserEntity systemUserEntity) {
+    public SystemUserDto updateSystemUser(Long id, SystemUserDto systemUserDto,String accessGroup) throws MessagingException, UnsupportedEncodingException {
+        SystemUserEntity systemUserEntity = systemUserRepository.findById(id).get();
+
+        systemUserEntity.setFirstName(systemUserDto.getFirstName());
+        systemUserEntity.setLastName(systemUserDto.getLastName());
+
+
+        String email = systemUserDto.getEmailId();
+        String name = systemUserDto.getFirstName();
+        String login = "http://localhost:8080/api/v1/auth/authenticate";
+        String subject = "Access Group Assignment";
+        String content = "<p style=\"font-family: Arial, sans-serif; font-size: 14px; color: #333333;\">Hello " + name + ",</p>"
+                + "<p style=\"font-family: Arial, sans-serif; font-size: 14px; color: #333333;\">You have been assigned to the following Access Group:</p>"
+                + "<p style=\"font-family: Arial, sans-serif; font-size: 14px; color: #333333;\"><strong>" + accessGroup + "</strong></p>"
+                + "<p style=\"font-family: Arial, sans-serif; font-size: 14px; color: #333333;\">Please click the button below to proceed:</p>"
+                + "<p><a href=\"" + login + "\" style=\"display: inline-block; font-family: Arial, sans-serif; font-size: 14px; color: #ffffff; background-color: #007bff; text-decoration: none; padding: 10px 20px; border-radius: 5px;\">Go to Access Group</a></p>"
+                + "<p style=\"font-family: Arial, sans-serif; font-size: 14px; color: #333333;\">If you have any questions, please contact the administrator.</p>";
+
+
+        EmailSender emailSender = new EmailSender(mailSender);
+        systemUserEntity.setEmailId(systemUserDto.getEmailId());
         systemUserRepository.save(systemUserEntity);
-        return systemUserEntity;
-    }
-
-
-    @Override
-    public boolean deleteSystemUsers(Long id) {
-        SystemUserEntity systemUser = systemUserRepository.findById(id).get();
-        systemUserRepository.delete(systemUser);
-        return true;
-    }
-
-    @Override
-    public SystemUserEntity getSystemUserById(Long id) throws SystemUserNotFoundException {
-        Optional<SystemUserEntity> systemUserEntity = systemUserRepository.findById(id);
-        if (!systemUserEntity.isPresent()) {
-            throw new SystemUserNotFoundException("Systemuser Not Available");
+        if (accessGroup.equals("Product Owner")) {
+            AccessGroupEntity accessGroupEntity = accessGroupRepository.findByAccessGroupName(accessGroup);
+            accessGroupEntity.addUserToAccessGroup(systemUserEntity);
+            accessGroupRepository.save(accessGroupEntity);
+            emailSender.sendEmail(email, subject, content);
         }
 
-        return systemUserEntity.get();
-    }
-
-    @Override
-    public SystemUser updateSystemUser(Long id, SystemUser systemUser) {
-        SystemUserEntity systemUserEntity = systemUserRepository.findById(id).get();
-        systemUserEntity.setFirstName(systemUser.getFirstName());
-        systemUserEntity.setLastName(systemUser.getLastName());
-        systemUserEntity.setAccessGroup(systemUser.getAccessGroup());
-        systemUserEntity.setResetPasswordToken(systemUser.getResetPasswordToken());
-//        systemUserEntity.setPassword(systemUser.getPassword());
-        systemUserEntity.setEmailId(systemUser.getEmailId());
-
-        systemUserRepository.save(systemUserEntity);
-
-        return systemUser;
+        return systemUserDto;
     }
 
     @Override
@@ -87,17 +95,35 @@ public class SystemUserServiceImpl implements SystemUserService {
     }
 
 
-    public SystemUserEntity getByResetPasswordToken(String resetPasswordToken){
+    public SystemUserEntity getByResetPasswordToken(String resetPasswordToken) {
         return systemUserRepository.findByResetPasswordToken(resetPasswordToken).get();
     }
 
-    public void updatePassword(String newPassword, SystemUserEntity systemUserEntity){
+    public void updatePassword(String newPassword, SystemUserEntity systemUserEntity) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodePassword = passwordEncoder.encode(newPassword);
         systemUserEntity.setPassword(encodePassword);
         systemUserRepository.save(systemUserEntity);
     }
+    @Override
+    public ResponseEntity<SystemUserDto> getSystemUsersDetailsById(Long id) {
+        SystemUserEntity user = systemUserRepository.findById(id).get();
+        SystemUserDto systemUserDto = new SystemUserDto();
+        systemUserDto.setSystemUserId(user.getSystemUserId());
+        systemUserDto.setFirstName(user.getFirstName());
+        List<AccessGroupEntity> accessGroupEntities = user.getAccessGroupEntities();
+        List<String> accesGroups = new ArrayList<>();
+        for (AccessGroupEntity a : accessGroupEntities){
+            String x = a.getAccessGroupName();
+            accesGroups.add(x);
+        }
+        systemUserDto.setAccessGroups(accesGroups);
+        systemUserDto.setLastName(user.getLastName()); // Corrected line
+        systemUserDto.setEmailId(user.getEmailId());
+        systemUserDto.setRole(user.getRole());
 
+        return ResponseEntity.ok(systemUserDto);
+}
 
 
     @Override
@@ -110,10 +136,17 @@ public class SystemUserServiceImpl implements SystemUserService {
                 SystemUserDto systemUserDto = new SystemUserDto();
                 systemUserDto.setSystemUserId(user.getSystemUserId());
                 systemUserDto.setFirstName(user.getFirstName());
+                List<AccessGroupEntity> accessGroupEntities = user.getAccessGroupEntities();
+                List<String> accesGroups = new ArrayList<>();
+                for (AccessGroupEntity a : accessGroupEntities){
+                    String x = a.getAccessGroupName();
+                    accesGroups.add(x);
+                }
+                systemUserDto.setAccessGroups(accesGroups);
                 systemUserDto.setLastName(user.getLastName()); // Corrected line
                 systemUserDto.setEmailId(user.getEmailId());
                 systemUserDto.setRole(user.getRole());
-                systemUserDto.setAccessGroup(user.getAccessGroup());
+
 
                 systemUserDtos.add(systemUserDto);
             }
@@ -124,4 +157,4 @@ public class SystemUserServiceImpl implements SystemUserService {
 
 
 
-}
+    }

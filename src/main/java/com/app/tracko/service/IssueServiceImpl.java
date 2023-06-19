@@ -34,7 +34,6 @@ public class IssueServiceImpl implements IssueService{
         List<Issue> issues= issueEntities.stream().
                 map(issue-> new Issue(
                         issue.getIssueId(),
-                        issue.getProjectName(),
                         issue.getIssueType(),
                         issue.getSummary(),
                         issue.getDescription(),

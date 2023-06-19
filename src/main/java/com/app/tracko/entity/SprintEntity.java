@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -18,5 +19,12 @@ public class SprintEntity {
     private Date StartDate;
     private Date EndDate;
     private String SprintGoal;
+
+    @ManyToMany(cascade = CascadeType.ALL , fetch = FetchType.EAGER)
+    @JoinTable(name = "sprint_issue_group",
+            joinColumns = {@JoinColumn(name = "issue_fk")},
+            inverseJoinColumns = {@JoinColumn(name = "sprint_fk")}
+    )
+    private List<IssueEntity> issues;
 
 }

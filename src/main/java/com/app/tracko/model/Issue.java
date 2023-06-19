@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Issue {
     private long IssueId;
-    private String ProjectName;
     private String IssueType;
     private String Summary;
     private String Description;

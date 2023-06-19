@@ -2,12 +2,17 @@ package com.app.tracko.controller;
 
 import com.app.tracko.entity.AccessEntity;
 import com.app.tracko.entity.AccessGroupEntity;
+import com.app.tracko.entity.ProjectEntity;
+import com.app.tracko.entity.SystemUserEntity;
 import com.app.tracko.model.AccessDto;
 import com.app.tracko.model.AccessGroupDto;
+import com.app.tracko.model.MembersDto;
+import com.app.tracko.model.SystemUserDto;
 import com.app.tracko.repository.AccessGroupRepository;
 import com.app.tracko.repository.AccessRepository;
+import com.app.tracko.repository.ProjectRepository;
+import com.app.tracko.repository.SystemUserRepository;
 import com.app.tracko.service.AccessGroupService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000","http://localhost:3001","http://localhost:3002","http://localhost:3002"})
 @RestController
 @RequestMapping("/api/v1/accessgroups")
 public class AccessGroupController {
@@ -23,11 +28,15 @@ public class AccessGroupController {
     private final AccessGroupRepository accessGroupRepository;
     private final AccessRepository accessRepository;
     private final AccessGroupService accessGroupService;
+    private final SystemUserRepository systemUserRepository;
+    private final ProjectRepository projectRepository;
 
-    public AccessGroupController(AccessGroupRepository accessGroupRepository, AccessRepository accessRepository, AccessGroupService accessGroupService) {
+    public AccessGroupController(AccessGroupRepository accessGroupRepository, AccessRepository accessRepository, AccessGroupService accessGroupService, SystemUserRepository systemUserRepository, ProjectRepository projectRepository) {
         this.accessGroupRepository = accessGroupRepository;
         this.accessRepository = accessRepository;
         this.accessGroupService = accessGroupService;
+        this.systemUserRepository = systemUserRepository;
+        this.projectRepository = projectRepository;
     }
 
 
@@ -67,27 +76,19 @@ public class AccessGroupController {
 //    }
 //
 //
-    @GetMapping("/dto")
-    public List<AccessGroupDto> getAllAccessGroups() {
-        List<AccessGroupEntity> accessGroupEntity = accessGroupService.getAllAccessGroups();
-        List<AccessGroupDto> accessGroupDtos = new ArrayList<>();
-        for (AccessGroupEntity a : accessGroupEntity){
-            AccessGroupDto accessGroupDto = new AccessGroupDto();
-            accessGroupDto.setAccessGroupName(a.getAccessGroupName());
-            accessGroupDto.setId(a.getAccessGroupId());
-            accessGroupDto.setDescription(a.getGroupDescription());
-            accessGroupDtos.add(accessGroupDto);
-        }
-        return accessGroupDtos;
+
+    @GetMapping("/allDto")
+    public List<AccessGroupDto> getAllAccessGroupDto(){
+        return accessGroupService.getAllAccessGroupDto();
     }
+
     @GetMapping("/one")
     public AccessGroupDto getAccessGroup(@RequestParam Long id) {
         AccessGroupEntity accessGroupEntity = accessGroupRepository.findById(id).get();
         AccessGroupDto accessGroupDto = new AccessGroupDto();
         accessGroupDto.setAccessGroupName(accessGroupEntity.getAccessGroupName());
-        accessGroupDto.setId(accessGroupEntity.getAccessGroupId());
+        accessGroupDto.setAccessGroupId(accessGroupEntity.getAccessGroupId());
         accessGroupDto.setDescription(accessGroupEntity.getGroupDescription());
-
         return accessGroupDto;
     }
 
@@ -115,9 +116,9 @@ public class AccessGroupController {
         return ResponseEntity.ok(accessGroupEntity);
     }
 
-    @PutMapping
+    @PutMapping("/addAccessToGroup")
     public ResponseEntity<String> UpdateAccessGroup(@RequestParam Long id,
-                                                    @RequestParam List<Long> id2) {
+                                                    @RequestBody List<Long> id2) {
         AccessGroupEntity a = accessGroupRepository.findById(id).get();
         List<AccessEntity> b = new ArrayList<>();
         for(Long x : id2) {
@@ -135,16 +136,86 @@ public class AccessGroupController {
        return accessGroupRepository.findById(id).get();
 
     }
-    @GetMapping("/all")
-    public List<AccessGroupEntity> getAllAccessGroup(){
-        return accessGroupRepository.findAll();
-    }
+//    @GetMapping
+//    public List<AccessGroupEntity> getAllAccessGroup(){
+//        return accessGroupRepository.findAll();
+//    }
 
-    @GetMapping("/perGroup")
-    public List<AccessEntity> getAaccessesOfGroup(@RequestParam Long id){
+    @GetMapping("/accessPerGroup")
+    public List<AccessEntity> getAccessesOfGroup(@RequestParam Long id){
         AccessGroupEntity accessGroupEntity = accessGroupRepository.findById(id).get();
         List<AccessEntity> accessEntities = accessGroupEntity.getAccesses();
         return accessEntities;
+    }
+
+    @GetMapping("/membersPerGroup")
+    public List<MembersDto> getMembersOfGroup(@RequestParam Long id){
+        AccessGroupEntity accessGroupEntity = accessGroupRepository.findById(id).get();
+        List<SystemUserEntity> systemUserEntities = accessGroupEntity.getSystemUserEntities();
+        List<MembersDto> membersDtos = new ArrayList<>();
+        for(SystemUserEntity a : systemUserEntities){
+            MembersDto membersDto = new MembersDto();
+            membersDto.setFirstName(a.getFirstName());
+            membersDto.setSystemUserId(a.getSystemUserId());
+            membersDtos.add(membersDto);
+        }
+
+        return membersDtos;
+    }
+//    @DeleteMapping("/access-groups/{groupId}/system-users/{userId}")
+//    public void removeSystemUserFromAccessGroup(@PathVariable Long groupId, @PathVariable Long userId) {
+//        // Retrieve the AccessGroupEntity by its ID from the database
+//        AccessGroupEntity accessGroup = accessGroupService.findById(groupId);
+//
+//        if (accessGroup != null) {
+//            // Retrieve the SystemUserEntity by its ID from the database
+//            SystemUserEntity systemUser = systemUserService.findById(userId);
+//
+//            if (systemUser != null) {
+//                // Remove the association between AccessGroupEntity and the specific SystemUserEntity
+//                accessGroup.getSystemUserEntities().remove(systemUser);
+//
+//                // Update the AccessGroupEntity in the database
+//                accessGroupService.save(accessGroup);
+//            }
+//        }
+//    }
+
+
+    @PutMapping("/userToGroup")
+    public ResponseEntity<String> addUserToAccessGroup(@RequestParam Long id,
+                                                        @RequestBody List<Long> id2) {
+        AccessGroupEntity a = accessGroupRepository.findById(id).get();
+        List<SystemUserEntity> b = new ArrayList<>();
+        for(Long x : id2) {
+            SystemUserEntity y = systemUserRepository.findById(x).get();
+            a.addUserToAccessGroup(y);
+        }
+        accessGroupRepository.save(a);
+
+        return ResponseEntity.ok("Successfully Updated AccessGroup");
+    }
+
+    @GetMapping("/po")
+    public List<SystemUserDto> getProductOwner(){
+        AccessGroupEntity accessGroupEntity = accessGroupRepository.findById(1L).get();
+        List<SystemUserEntity> systemUserEntities = accessGroupEntity.getSystemUserEntities();
+        List<SystemUserDto> systemUserDtos = new ArrayList<>();
+        for(SystemUserEntity s : systemUserEntities){
+            SystemUserDto systemUserDto = new SystemUserDto();
+            systemUserDto.setFirstName(s.getFirstName());
+            systemUserDto.setRole(s.getRole());
+            systemUserDto.setSystemUserId(s.getSystemUserId());
+            systemUserDto.setEmailId(s.getEmailId());
+            systemUserDtos.add(systemUserDto);
+        }
+        return systemUserDtos;
+    }
+
+    @GetMapping("/poName/{id}")
+    public String poName(@PathVariable Long id){
+        ProjectEntity p = projectRepository.findById(id).get();
+        return p.getProjectLead();
     }
 
 

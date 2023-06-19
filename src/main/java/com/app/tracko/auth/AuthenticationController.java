@@ -22,7 +22,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000","http://localhost:3001"})
 @RequiredArgsConstructor
 public class AuthenticationController {
 
@@ -70,6 +70,19 @@ public ResponseEntity<?> register(
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
   }
 
+  @GetMapping("/id")
+  public ResponseEntity<Long> getUserId(Authentication authentication) {
+    if (authentication != null && authentication.isAuthenticated()) {
+      Object principal = authentication.getPrincipal();
+      if (principal instanceof SystemUserEntity) {
+        SystemUserEntity user = (SystemUserEntity) principal;
+        Long userId = user.getSystemUserId();
+        return ResponseEntity.ok(userId);
+      }
+    }
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+  }
+
 
   @PostMapping("/adminAssign")
   public ResponseEntity<String> assignAdmin(@RequestParam Long id){
@@ -81,11 +94,11 @@ public ResponseEntity<?> register(
   }
 
   @PostMapping("/refresh-token")
-  public void refreshToken(
+  public AuthenticationResponse refreshToken(
       HttpServletRequest request,
       HttpServletResponse response
   ) throws IOException {
-    authenticationService.refreshToken(request, response);
+    return authenticationService.refreshToken(request, response);
   }
 
 

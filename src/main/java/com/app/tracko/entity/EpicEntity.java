@@ -18,12 +18,6 @@ public class EpicEntity {
     private long epicId;
     private String epicName;
 
-    @OneToMany(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER,
-            mappedBy = "epicEntity" )
-    private List<ChildIssueEntity> childIssueEntity ;
-
     public EpicEntity() {
 
     }

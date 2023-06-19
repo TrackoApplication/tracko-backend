@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000","http://localhost:3001","http://localhost:3002","http://localhost:3002"})
 @RestController
 @RequestMapping("/api/v1/issues")
 public class IssueController {
@@ -69,6 +69,8 @@ public class IssueController {
         public List<IssueEntity> getAssignee(@PathVariable String Assignee){
             return issueRepository.findByAssignee(Assignee);
         }
+
+
 
 
 }

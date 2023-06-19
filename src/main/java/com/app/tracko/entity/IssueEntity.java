@@ -21,13 +21,10 @@ public class IssueEntity {
             strategy = GenerationType.SEQUENCE,
             generator = "issue_sequence"
     )
-
     private long IssueId;
-    private String ProjectName;
     private String IssueType;
     private String Summary;
     private String Description;
-    @Column(name = "Assignee")
     private String Assignee;
     private String SprintName;
     private String EpicName;

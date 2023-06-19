@@ -1,11 +1,14 @@
 package com.app.tracko.model;
 
+import com.app.tracko.entity.AccessGroupEntity;
 import com.app.tracko.entity.Role;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -17,7 +20,7 @@ public class SystemUserDto {
     private String emailId;
 
 
-    private String accessGroup = "Not Assigned";
+    private List<String> accessGroups;
     @Enumerated(EnumType.STRING)
     private Role role;
 }

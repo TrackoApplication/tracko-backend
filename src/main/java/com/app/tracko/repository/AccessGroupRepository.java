@@ -8,4 +8,5 @@ import java.util.List;
 @Repository
 public interface AccessGroupRepository extends JpaRepository<AccessGroupEntity,Long> {
 
+    AccessGroupEntity findByAccessGroupName(String i);
 }

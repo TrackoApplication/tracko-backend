@@ -18,14 +18,20 @@ public class ChildIssueEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long childIssueId;
     private String childIssueName;
-
-    @ManyToOne(optional = false,
-    fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "epic_fk",
-            referencedColumnName = "epicId"
-    )
-    private EpicEntity epicEntity;
+    private String Type;
+    private String Created_date;
+    private String Description;
+    private int Story_points;
+    private int Status;
+    private String Summary;
+    private String Assignee;
+    private String Sprint;
+    private Boolean ReqOfTest;
+    private int DevEstimatedSP;
+    private int TestEstimatedSP;
+    private int TotalSP;
+    private String Priority;
+    private String Reporter;
 
 
 

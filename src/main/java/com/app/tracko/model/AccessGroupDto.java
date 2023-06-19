@@ -8,8 +8,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccessGroupDto {
-    private Long id;
+    private Long accessGroupId;
     private String accessGroupName;
     private String description;
+
+    private Long noOfMembers;
 
 }

@@ -7,7 +7,6 @@ import com.app.tracko.repository.SystemUserRepository;
 import com.app.tracko.token.Token;
 import com.app.tracko.token.TokenRepository;
 import com.app.tracko.token.TokenType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +34,7 @@ public class AuthenticationService {
         .emailId(request.getEmailId())
         .password(passwordEncoder.encode(request.getPassword()))
         .role(Role.USER)
-            .accessGroup("NOT-ASSIGNED")
+
             .resetPasswordToken(null)
         .build();
     var savedUser = systemUserRepository.save(user);
@@ -89,7 +88,7 @@ public class AuthenticationService {
     tokenRepository.saveAll(validUserTokens);
   }
 
-  public void refreshToken(
+  public AuthenticationResponse refreshToken(
           HttpServletRequest request,
           HttpServletResponse response
   ) throws IOException {
@@ -97,7 +96,7 @@ public class AuthenticationService {
     final String refreshToken;
     final String userEmail;
     if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-      return;
+      return null;
     }
     refreshToken = authHeader.substring(7);
     userEmail = jwtService.extractUsername(refreshToken);
@@ -108,12 +107,18 @@ public class AuthenticationService {
         var accessToken = jwtService.generateToken(user);
         revokeAllUserTokens(user);
         saveUserToken(user, accessToken);
-        var authResponse = AuthenticationResponse.builder()
+//        var authResponse = AuthenticationResponse.builder()
+//                .accessToken(accessToken)
+//               .refreshToken(refreshToken)
+//                .build();
+//        new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+
+        return AuthenticationResponse.builder()
                 .accessToken(accessToken)
-//                .refreshToken(refreshToken)
+                .refreshToken(refreshToken)
                 .build();
-        new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
       }
     }
+    return null;
   }
 }

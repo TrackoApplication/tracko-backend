@@ -30,10 +30,24 @@ public class AccessGroupEntity {
             inverseJoinColumns = {@JoinColumn(name = "access_fk")}
     )
     private List<AccessEntity> accesses ;
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "system_user_access_group",
+            joinColumns = @JoinColumn(name = "access_group_fk"),
+            inverseJoinColumns = @JoinColumn(name = "system_user_fk", referencedColumnName = "systemUserId")
+    )
+    private List<SystemUserEntity> systemUserEntities;
+
 
     public void addAccessToAccessGroup(AccessEntity accessEntity){
         if (accessEntity!= null){
             accesses.add(accessEntity);
+        }
+    }
+
+    public void addUserToAccessGroup(SystemUserEntity systemUserEntity){
+        if (systemUserEntity != null){
+            systemUserEntities.add(systemUserEntity);
         }
     }
 

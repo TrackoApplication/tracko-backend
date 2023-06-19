@@ -1,6 +1,7 @@
 package com.app.tracko.entity;
 
 import com.app.tracko.entity.AccessGroupEntity;
+import com.app.tracko.model.AccessGroup;
 import com.app.tracko.token.Token;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -48,13 +49,29 @@ public class SystemUserEntity implements UserDetails {
     private String emailId;
     private Boolean isDeleted = false;
 
-    private String accessGroup = "Not Assigned";
+
+
     @Enumerated(EnumType.STRING)
     private Role role;
     @OneToMany(mappedBy = "user" , cascade = CascadeType.ALL)
     private List<Token> tokens;
 
+    @ManyToMany(mappedBy = "systemUserEntities" ,fetch = FetchType.EAGER)
+    private List<AccessGroupEntity> accessGroupEntities;
+
+    @ManyToMany(mappedBy = "projectMembers", fetch = FetchType.EAGER)
+    private List<ProjectEntity> projects;
+
     private String resetPasswordToken;
+
+    public void addToAccessGroup(AccessGroupEntity accessGroupEntity){
+        if(accessGroupEntity != null){
+            accessGroupEntities.add(accessGroupEntity);
+        }
+    }
+
+
+
 
     public SystemUserEntity() {
     }
