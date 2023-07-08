@@ -15,6 +15,7 @@ public class Issue {
     private String Summary;
     private String Description;
     private String Assignee;
+    private Long SprintId;
     private String SprintName;
     private String EpicName;
     private Boolean ReqOfTesting;

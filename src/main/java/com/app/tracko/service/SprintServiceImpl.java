@@ -3,9 +3,7 @@ package com.app.tracko.service;
 import com.app.tracko.entity.SprintEntity;
 import com.app.tracko.model.Sprint;
 import com.app.tracko.repository.SprintRepository;
-import com.sun.mail.iap.Response;
 import org.springframework.beans.BeanUtils;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,7 +38,8 @@ public class SprintServiceImpl implements SprintService {
                         spr.getDuration(),
                         spr.getStartDate(),
                         spr.getEndDate(),
-                        spr.getSprintGoal()))
+                        spr.getSprintGoal(),
+                        spr.isIsStarted()))
                 .collect(Collectors.toList());
         return sprints;
     }
@@ -67,6 +66,7 @@ public class SprintServiceImpl implements SprintService {
         sprintEntity.setStartDate(sprint.getStartDate());
         sprintEntity.setEndDate(sprint.getEndDate());
         sprintEntity.setSprintGoal(sprint.getSprintGoal());
+        sprintEntity.setIsStarted(sprint.isIsStarted());
 
         sprintRepository.save(sprintEntity);
         return sprint;

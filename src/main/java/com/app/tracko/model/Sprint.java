@@ -16,4 +16,5 @@ public class Sprint {
     private Date StartDate;
     private Date EndDate;
     private String SprintGoal;
+    private boolean IsStarted;
 }

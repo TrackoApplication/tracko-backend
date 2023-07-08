@@ -39,6 +39,7 @@ public class IssueServiceImpl implements IssueService{
                         iss.getSummary(),
                         iss.getDescription(),
                         iss.getAssignee(),
+                        iss.getSprintId(),
                         iss.getSprintName(),
                         iss.getEpicName(),
                         iss.getReqOfTesting(),
@@ -56,5 +57,10 @@ public class IssueServiceImpl implements IssueService{
         IssueEntity issue = issueRepository.findById(IssueId).get();
         issueRepository.delete(issue);
         return true;
+    }
+
+    @Override
+    public Issue updateIssue(Long issueId, Issue issue) {
+        return null;
     }
 }

@@ -10,4 +10,6 @@ public interface IssueService {
     List<Issue> getAllIssues();
 
     boolean deleteIssue(Long issueId);
+
+    Issue updateIssue(Long issueId, Issue issue);
 }
