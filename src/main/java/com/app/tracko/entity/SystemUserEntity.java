@@ -59,7 +59,7 @@ public class SystemUserEntity implements UserDetails {
     @ManyToMany(mappedBy = "systemUserEntities" ,fetch = FetchType.EAGER)
     private List<AccessGroupEntity> accessGroupEntities;
 
-    @ManyToMany(mappedBy = "projectMembers", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "projectMembers", fetch = FetchType.LAZY)
     private List<ProjectEntity> projects;
 
     private String resetPasswordToken;

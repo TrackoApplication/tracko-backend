@@ -70,13 +70,10 @@ public class SystemUserServiceImpl implements SystemUserService {
         EmailSender emailSender = new EmailSender(mailSender);
         systemUserEntity.setEmailId(systemUserDto.getEmailId());
         systemUserRepository.save(systemUserEntity);
-        if (accessGroup.equals("Product Owner")) {
             AccessGroupEntity accessGroupEntity = accessGroupRepository.findByAccessGroupName(accessGroup);
             accessGroupEntity.addUserToAccessGroup(systemUserEntity);
             accessGroupRepository.save(accessGroupEntity);
             emailSender.sendEmail(email, subject, content);
-        }
-
         return systemUserDto;
     }
 

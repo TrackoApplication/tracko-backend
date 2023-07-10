@@ -14,7 +14,7 @@ public interface AccessGroupService {
 
     List<AccessGroupEntity> getAllAccessGroups();
 
-    List<AccessGroupDto> getAllAccessGroupDto();
+    List<AccessGroupDto> getAllAccessGroupDto(Long id);
 
 
 }

@@ -27,7 +27,7 @@ public class TeamEntity {
             name = "team_fk",
             referencedColumnName = "teamId"
     )
-    private List<IssueEntity> teamIssues;
+    private List<SprintEntity> teamSprints;
 
     @ManyToMany(cascade = CascadeType.ALL , fetch = FetchType.EAGER)
     @JoinTable(name = "team_member",
@@ -35,6 +35,8 @@ public class TeamEntity {
             inverseJoinColumns = {@JoinColumn(name = "system_user_id")}
     )
     private List<SystemUserEntity> members;
+
+    private SystemUserEntity scrum
 
     public void addUserToTeam(SystemUserEntity systemUserEntity){
         if (systemUserEntity != null){

@@ -1,24 +1,18 @@
 package com.app.tracko.controller;
 
-import com.app.tracko.entity.AccessEntity;
-import com.app.tracko.entity.AccessGroupEntity;
-import com.app.tracko.entity.ProjectEntity;
-import com.app.tracko.entity.SystemUserEntity;
+import com.app.tracko.entity.*;
 import com.app.tracko.model.AccessDto;
 import com.app.tracko.model.AccessGroupDto;
 import com.app.tracko.model.MembersDto;
 import com.app.tracko.model.SystemUserDto;
-import com.app.tracko.repository.AccessGroupRepository;
-import com.app.tracko.repository.AccessRepository;
-import com.app.tracko.repository.ProjectRepository;
-import com.app.tracko.repository.SystemUserRepository;
+import com.app.tracko.repository.*;
 import com.app.tracko.service.AccessGroupService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @CrossOrigin(origins = {"http://localhost:3000","http://localhost:3001","http://localhost:3002","http://localhost:3002"})
 @RestController
@@ -30,13 +24,15 @@ public class AccessGroupController {
     private final AccessGroupService accessGroupService;
     private final SystemUserRepository systemUserRepository;
     private final ProjectRepository projectRepository;
+    private final ProjectGroupRepository projectGroupRepository;
 
-    public AccessGroupController(AccessGroupRepository accessGroupRepository, AccessRepository accessRepository, AccessGroupService accessGroupService, SystemUserRepository systemUserRepository, ProjectRepository projectRepository) {
+    public AccessGroupController(AccessGroupRepository accessGroupRepository, AccessRepository accessRepository, AccessGroupService accessGroupService, SystemUserRepository systemUserRepository, ProjectRepository projectRepository, ProjectGroupRepository projectGroupRepository) {
         this.accessGroupRepository = accessGroupRepository;
         this.accessRepository = accessRepository;
         this.accessGroupService = accessGroupService;
         this.systemUserRepository = systemUserRepository;
         this.projectRepository = projectRepository;
+        this.projectGroupRepository = projectGroupRepository;
     }
 
 
@@ -78,8 +74,8 @@ public class AccessGroupController {
 //
 
     @GetMapping("/allDto")
-    public List<AccessGroupDto> getAllAccessGroupDto(){
-        return accessGroupService.getAllAccessGroupDto();
+    public List<AccessGroupDto> getAllAccessGroupDto(@RequestParam Long id){
+        return accessGroupService.getAllAccessGroupDto(id);
     }
 
     @GetMapping("/one")
@@ -148,8 +144,8 @@ public class AccessGroupController {
         return accessEntities;
     }
 
-    @GetMapping("/membersPerGroup")
-    public List<MembersDto> getMembersOfGroup(@RequestParam Long id){
+    @GetMapping("/membersPerGroup/{id}")
+    public List<MembersDto> getMembersOfGroup(@PathVariable Long id){
         AccessGroupEntity accessGroupEntity = accessGroupRepository.findById(id).get();
         List<SystemUserEntity> systemUserEntities = accessGroupEntity.getSystemUserEntities();
         List<MembersDto> membersDtos = new ArrayList<>();
@@ -159,41 +155,64 @@ public class AccessGroupController {
             membersDto.setSystemUserId(a.getSystemUserId());
             membersDtos.add(membersDto);
         }
-
         return membersDtos;
     }
-//    @DeleteMapping("/access-groups/{groupId}/system-users/{userId}")
-//    public void removeSystemUserFromAccessGroup(@PathVariable Long groupId, @PathVariable Long userId) {
-//        // Retrieve the AccessGroupEntity by its ID from the database
-//        AccessGroupEntity accessGroup = accessGroupService.findById(groupId);
-//
-//        if (accessGroup != null) {
-//            // Retrieve the SystemUserEntity by its ID from the database
-//            SystemUserEntity systemUser = systemUserService.findById(userId);
-//
-//            if (systemUser != null) {
-//                // Remove the association between AccessGroupEntity and the specific SystemUserEntity
-//                accessGroup.getSystemUserEntities().remove(systemUser);
-//
-//                // Update the AccessGroupEntity in the database
-//                accessGroupService.save(accessGroup);
-//            }
-//        }
-//    }
 
+    @GetMapping("/membersPerProjectGroup")
+    public List<MembersDto> membersPerProjectGroup(@RequestParam Long id1, @RequestParam Long id2){
+        ProjectEntity p = projectRepository.findById(id1).get();
+        ProjectGroupEntity pg = p.getProjectGroupEntity();
+        List<MembersDto> membersDtos = new ArrayList<>();
+        if(id2==1){
+            SystemUserEntity s = pg.getProductOwner();
+            MembersDto membersDto = new MembersDto();
+            membersDto.setFirstName(s.getFirstName());
+            membersDto.setSystemUserId(s.getSystemUserId());
+            membersDtos.add(membersDto);
+            return membersDtos;
+        } else if (id2==2) {
+            Set<SystemUserEntity> systemUserEntities = pg.getScrumMasters();
+            for(SystemUserEntity a : systemUserEntities){
+                MembersDto membersDto = new MembersDto();
+                membersDto.setFirstName(a.getFirstName());
+                membersDto.setSystemUserId(a.getSystemUserId());
+                membersDtos.add(membersDto);
+            }
+            return membersDtos;
+        }else{
+            Set<SystemUserEntity> systemUserEntities = pg.getTeamMembers();
+            for(SystemUserEntity a : systemUserEntities){
+                MembersDto membersDto = new MembersDto();
+                membersDto.setFirstName(a.getFirstName());
+                membersDto.setSystemUserId(a.getSystemUserId());
+                membersDtos.add(membersDto);
+            }
+            return membersDtos;
+        }
+    }
 
     @PutMapping("/userToGroup")
     public ResponseEntity<String> addUserToAccessGroup(@RequestParam Long id,
-                                                        @RequestBody List<Long> id2) {
-        AccessGroupEntity a = accessGroupRepository.findById(id).get();
-        List<SystemUserEntity> b = new ArrayList<>();
-        for(Long x : id2) {
-            SystemUserEntity y = systemUserRepository.findById(x).get();
-            a.addUserToAccessGroup(y);
-        }
-        accessGroupRepository.save(a);
+                                                       @RequestParam List<Long> id2) {
+        try {
+            AccessGroupEntity a = accessGroupRepository.findById(id)
+                    .orElseThrow(() -> new NoSuchElementException("Access Group not found"));
 
-        return ResponseEntity.ok("Successfully Updated AccessGroup");
+            List<SystemUserEntity> b = new ArrayList<>();
+            for (Long x : id2) {
+                SystemUserEntity y = systemUserRepository.findById(x)
+                        .orElseThrow(() -> new NoSuchElementException("System User not found"));
+                a.addUserToAccessGroup(y);
+            }
+
+            accessGroupRepository.save(a);
+
+            return ResponseEntity.ok("Successfully updated Access Group");
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while updating the Access Group");
+        }
     }
 
     @GetMapping("/po")
@@ -211,12 +230,124 @@ public class AccessGroupController {
         }
         return systemUserDtos;
     }
+    @GetMapping("/sm")
+    public List<SystemUserDto> getScrumMasters(){
+        AccessGroupEntity accessGroupEntity = accessGroupRepository.findById(2L).get();
+        List<SystemUserEntity> systemUserEntities = accessGroupEntity.getSystemUserEntities();
+        List<SystemUserDto> systemUserDtos = new ArrayList<>();
+        for(SystemUserEntity s : systemUserEntities){
+            SystemUserDto systemUserDto = new SystemUserDto();
+            systemUserDto.setFirstName(s.getFirstName());
+            systemUserDto.setRole(s.getRole());
+            systemUserDto.setSystemUserId(s.getSystemUserId());
+            systemUserDto.setEmailId(s.getEmailId());
+            systemUserDtos.add(systemUserDto);
+        }
+        return systemUserDtos;
+    }
+
+    @GetMapping("/tm")
+    public List<SystemUserDto> getTeamMembers(){
+        AccessGroupEntity accessGroupEntity = accessGroupRepository.findById(3L).get();
+        List<SystemUserEntity> systemUserEntities = accessGroupEntity.getSystemUserEntities();
+        List<SystemUserDto> systemUserDtos = new ArrayList<>();
+        for(SystemUserEntity s : systemUserEntities){
+            SystemUserDto systemUserDto = new SystemUserDto();
+            systemUserDto.setFirstName(s.getFirstName());
+            systemUserDto.setRole(s.getRole());
+            systemUserDto.setSystemUserId(s.getSystemUserId());
+            systemUserDto.setEmailId(s.getEmailId());
+            systemUserDtos.add(systemUserDto);
+        }
+        return systemUserDtos;
+    }
+
+    @GetMapping("/accessGroupMembers/{id}")
+    public List<SystemUserDto> getAccessGroupMembers(@PathVariable Long id){
+        AccessGroupEntity accessGroupEntity = accessGroupRepository.findById(id).get();
+        List<SystemUserEntity> systemUserEntities = accessGroupEntity.getSystemUserEntities();
+        List<SystemUserDto> systemUserDtos = new ArrayList<>();
+        for(SystemUserEntity s : systemUserEntities){
+            SystemUserDto systemUserDto = new SystemUserDto();
+            systemUserDto.setFirstName(s.getFirstName());
+            systemUserDto.setRole(s.getRole());
+            systemUserDto.setSystemUserId(s.getSystemUserId());
+            systemUserDto.setEmailId(s.getEmailId());
+            systemUserDtos.add(systemUserDto);
+        }
+        return systemUserDtos;
+    }
+
+
 
     @GetMapping("/poName/{id}")
-    public String poName(@PathVariable Long id){
-        ProjectEntity p = projectRepository.findById(id).get();
-        return p.getProjectLead();
+    public String poName(@PathVariable Long id) {
+        try {
+            ProjectEntity p = projectRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Project not found"));
+            SystemUserEntity s = p.getProjectGroupEntity().getProductOwner();
+
+            // Trigger lazy loading to fetch the SystemUserEntity object
+            s.getFirstName();
+
+            return s.getFirstName();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error occurred while retrieving the product owner name.";
+        }
+    }
+
+    @PutMapping("/addGroupMembersToProject")
+    public ResponseEntity<String> addScrumMasterToTheProject(@RequestParam Long id1, @RequestParam Long id2,  @RequestParam List<Long> id3) {
+        try {
+            ProjectEntity p = projectRepository.findById(id1)
+                    .orElseThrow(() -> new NoSuchElementException("Project not found"));
+            ProjectGroupEntity x = p.getProjectGroupEntity();
+
+            List<SystemUserEntity> b = new ArrayList<>();
+            for(Long y : id3) {
+                SystemUserEntity s = systemUserRepository.findById(y)
+                        .orElseThrow(() -> new NoSuchElementException("System User not found"));
+
+                if (id2 == 2) {
+                    x.addScrumMastersToProject(s);
+                } else {
+                    x.addTeamMembersToProject(s);
+                }
+
+            }
+
+            projectGroupRepository.save(x);
+
+
+            return ResponseEntity.ok("Successfully added Scrum Master to the project");
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while updating the project");
+        }
+    }
+
+    @PutMapping("/teamMembersToProject")
+    public ResponseEntity<String> addTeamMembersToTheProject(@RequestParam Long id1, @RequestParam Long id2) {
+        try {
+            ProjectEntity p = projectRepository.findById(id1)
+                    .orElseThrow(() -> new NoSuchElementException("Project not found"));
+            ProjectGroupEntity x = p.getProjectGroupEntity();
+            SystemUserEntity s = systemUserRepository.findById(id2)
+                    .orElseThrow(() -> new NoSuchElementException("System User not found"));
+
+            x.addTeamMembersToProject(s);
+            projectGroupRepository.save(x);
+
+            return ResponseEntity.ok("Successfully added Scrum Master to the project");
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while updating the project");
+        }
     }
 
 
-    }
+
+
+}
