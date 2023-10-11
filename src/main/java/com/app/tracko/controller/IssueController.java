@@ -1,19 +1,16 @@
 package com.app.tracko.controller;
 
-import com.app.tracko.entity.IssueEntity;
-import com.app.tracko.entity.SprintEntity;
 import com.app.tracko.model.Issue;
-import com.app.tracko.model.Sprint;
 import com.app.tracko.repository.IssueRepository;
 import com.app.tracko.repository.SprintRepository;
 import com.app.tracko.service.IssueService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @CrossOrigin(origins="http://localhost:3000")
 @RestController
@@ -31,27 +28,54 @@ public class IssueController {
     }
 
     @PostMapping
-    public Issue createIssue(@RequestBody Issue issue){
-         return issueService.createIssue(issue);
+    public Issue createIssue(@RequestBody Issue issue) {
+        return issueService.createIssue(issue);
     }
 
     @GetMapping
-    public List<Issue> getAllIssues(){
+    public List<Issue> getAllIssues() {
         return issueService.getAllIssues();
     }
 
     @DeleteMapping("/{IssueId}")
-    public ResponseEntity<Map<String,Boolean>> deleteIssue(@PathVariable Long IssueId) {
+    public ResponseEntity<Map<String, Boolean>> deleteIssue(@PathVariable Long IssueId) {
         boolean deleted = false;
         deleted = issueService.deleteIssue(IssueId);
-        Map<String,Boolean> response = new HashMap<>();
+        Map<String, Boolean> response = new HashMap<>();
         response.put("deleted", deleted);
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/issues/{IssueId}")
+    public ResponseEntity<Issue> getIssueById(@PathVariable Long IssueId) {
+        Issue issue = null;
+        issue = issueService.getIssueById(IssueId);
+        return ResponseEntity.ok(issue);
+    }
+
+    @PutMapping("/{IssueId}")
+    public ResponseEntity<Issue> updateIssue(@PathVariable Long IssueId, @RequestBody Issue issue) {
+        issue = issueService.updateIssue(IssueId, issue);
+        return ResponseEntity.ok(issue);
+    }
+
+    //Newly added
+    @PutMapping("/{IssueId}/sprint")
+    public ResponseEntity<Issue> updateIssueSprint(@PathVariable Long IssueId, @RequestBody Issue updatedIssue) {
+        try {
+            Issue issue = issueService.updateIssueSprint(IssueId, updatedIssue);
+            return ResponseEntity.ok(issue);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+}
+
 //    @PutMapping
-//    public ResponseEntity<String> UpdateIssuesToSprint(@RequestParam Long issueId,
-//                                                    @RequestParam Long sprintId) {
+//    public ResponseEntity<String> UpdateIssuesToSprint(@RequestParam Long issueId, @RequestParam Long sprintId) {
 //        SprintEntity sprintEntity = sprintRepository.findById(sprintId).get();
 //        List<IssueEntity> issueEntities = new ArrayList<>();
 //        IssueEntity issue = issueRepository.findById(issueId).get();
@@ -61,10 +85,3 @@ public class IssueController {
 //
 //        return ResponseEntity.ok("Successfully Updated sprint");
 //    }
-
-    @PutMapping("/{IssueId}")
-    public ResponseEntity<Issue> updateIssue(@PathVariable Long IssueId, @RequestBody Issue issue) {
-        issue = issueService.updateIssue(IssueId, issue);
-        return ResponseEntity.ok(issue);
-    }
-}

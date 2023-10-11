@@ -12,15 +12,10 @@ public class IssueEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long IssueId;
     private String ProjectName;
-    private String IssueType;
+    private String issuetypeName;
     private String Summary;
     private String Description;
     private String Assignee;
-
-    @Nullable
-    private Long SprintId;
-    @Nullable
-    private String SprintName;
     private String EpicName;
     private Boolean ReqOfTesting;
     private int SPDeveloping;
@@ -28,4 +23,14 @@ public class IssueEntity {
     private int TotalSP;
     private String Priority;
     private String Reporter;
+    private String Status;
+    private String SprintName;
+
+    @ManyToOne
+    @JoinColumn(name = "sprint_Id")
+    private SprintEntity sprint;
+
+    @ManyToOne
+    @JoinColumn(name = "epic_Id")
+    private EpicEntity epic;
 }

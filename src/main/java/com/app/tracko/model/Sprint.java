@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,5 +17,6 @@ public class Sprint {
     private Date StartDate;
     private Date EndDate;
     private String SprintGoal;
-    private boolean IsStarted;
+//    private boolean IsStarted;
+
 }

@@ -19,19 +19,12 @@ public class SprintEntity {
     private Date StartDate;
     private Date EndDate;
     private String SprintGoal;
-    private boolean IsStarted;
+//    private boolean IsStarted;
 
-    @ManyToMany(cascade = CascadeType.ALL , fetch = FetchType.EAGER)
-    @JoinTable(name = "sprint_issue",
-            joinColumns = {@JoinColumn(name = "sprint_fk")},
-            inverseJoinColumns = {@JoinColumn(name = "issue_fk")}
-    )
+    @OneToMany(mappedBy = "sprint", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<IssueEntity> issues;
 
-    public void addIssuestoSprint(IssueEntity issueEntity){
-        if (issueEntity!= null){
-            issues.add(issueEntity);
-        }
-    }
+    @ManyToOne
+    @JoinColumn(name = "team_Id")
+    private TeamEntity team;
 }
-

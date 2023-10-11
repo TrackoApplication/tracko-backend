@@ -24,4 +24,7 @@ public class EpicEntity {
     private String targetEnd;
     private String storyPoints;
 
+    @OneToMany(mappedBy = "epic", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<IssueEntity> issues;
+
 }
